@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
+using System.Text.RegularExpressions;
 using Ookii.Dialogs;
 
 namespace Batch_Image_DL_Lite
@@ -17,10 +18,12 @@ namespace Batch_Image_DL_Lite
     public partial class MainWin : Form
     {
         Image imgStore;
-        readonly CookieContainer cookiecontainer = new CookieContainer();
+        internal readonly CookieContainer cookiecontainer = new CookieContainer();
+        internal static string[] imgExt = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
         private int initialValue;
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
         private string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
+        private static bool MangaMode = true;
 
         public MainWin()
         {
@@ -142,66 +145,75 @@ namespace Batch_Image_DL_Lite
             }
         }
 
-        private void ProcessImages(bool batchCheck)
+        private void ParseImageLinks(bool batchCheck)
         {
             bool NetworkAvailability = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
             if (NetworkAvailability)
             {
                 Cursor.Current = Cursors.WaitCursor;
+                if (MangaMode)
+                {
+                    imgExt = new String[] { ".jpg", ".jpeg", ".png" };
+                    if (mfRadioButton.Checked && !urlTextBox.Text.Contains("mangafox"))
+                    {
+                        MessageBox.Show("The program can currently only accept MangaFox links!", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ToggleInterfaces();
+                        parametersGroupBox.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        return;
+                    }
+                    else if (mhRadioButton.Checked && !urlTextBox.Text.Contains("mangahere"))
+                    {
+                        MessageBox.Show("The program can currently only accept MangaHere links!", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ToggleInterfaces();
+                        parametersGroupBox.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        return;
+                    }
+                }
 
                 if (!batchCheck)
                 {
-                    string tempURL = UrlParser(urlTextBox.Text, extComboBox) + (PrepValue(range1TextBox.Text)) + (PrepExt(extComboBox.Text));
-                    
+                    string tempURL = UrlParser(urlTextBox.Text, extComboBox) + int.Parse(range1TextBox.Text) + (PrepExt(extComboBox.Text)); //string tempURL = urlTextBox.Text;
+
                     var cookies = new NameValueCollection();
 
                     try
                     {
-                        for (int tries = 0; tries < 2; tries++)
-                        {
-                            using (var response = Builder(tempURL, new Uri(tempURL).Host, cookies))
-                            {
-                                using (var stream = response.GetResponseStream())
-                                {
-                                    string contentType = response.ContentType.ToLowerInvariant();
-                                    if (contentType.StartsWith("text/html"))
-                                    {
-                                        var parameters = Parse(stream, response.CharacterSet);
-                                        cookies.Add(parameters[0], parameters[1]);
-                                    }
-                                    if (contentType.StartsWith("image"))
-                                    {
-                                        imgStore = Image.FromStream(stream);
-                                        if (imgStore.Width > 10 && imgStore.Height > 10)
-                                        {
-                                            imgPictureBox.Image = imgStore;
-                                            filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                            if (SaveFile)
-                                            {
-                                                try
-                                                { SaveImage(imgStore, filenameTextBox); }
-                                                catch
-                                                { }
-                                            }
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            tempURL = UrlParser(urlTextBox.Text, extComboBox) + ((PrepValue(range1TextBox.Text)) + "_" + (PrepValue(int.Parse(range1TextBox.Text) + 1))) + (PrepExt(extComboBox.Text));
-                                            cookies = new NameValueCollection();
+                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
+                        request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                        request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-                                            using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                            {
+                                List<Uri> links = FetchLinksFromSource(sr.ReadToEnd());
+
+                                if (links.Count == 0)
+                                    return;
+                                else
+                                {
+                                    tempURL = links[0].ToString();
+
+                                    try
+                                    {
+                                        for (int tries = 0; tries < 2; tries++)
+                                        {
+                                            using (response = Builder(tempURL, new Uri(tempURL).Host, cookies))
                                             {
-                                                using (var stream2 = response2.GetResponseStream())
+                                                using (var stream = response.GetResponseStream())
                                                 {
+                                                    string contentType = response.ContentType.ToLowerInvariant();
                                                     if (contentType.StartsWith("text/html"))
                                                     {
-                                                        var parameters = Parse(stream2, response2.CharacterSet);
+                                                        var parameters = Parse(stream, response.CharacterSet);
                                                         cookies.Add(parameters[0], parameters[1]);
                                                     }
                                                     if (contentType.StartsWith("image"))
                                                     {
-                                                        imgStore = Image.FromStream(stream2);
+                                                        imgStore = Image.FromStream(stream);
                                                         if (imgStore.Width > 10 && imgStore.Height > 10)
                                                         {
                                                             imgPictureBox.Image = imgStore;
@@ -213,34 +225,67 @@ namespace Batch_Image_DL_Lite
                                                                 catch
                                                                 { }
                                                             }
+                                                            break;
                                                         }
-                                                        break;
+                                                        else
+                                                        {
+                                                            //tempURL = UrlParser(urlTextBox.Text, extComboBox) + ((PrepValue(range1TextBox.Text)) + "_" + (PrepValue(int.Parse(range1TextBox.Text) + 1))) + (PrepExt(extComboBox.Text));
+                                                            cookies = new NameValueCollection();
+
+                                                            using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                                            {
+                                                                using (var stream2 = response2.GetResponseStream())
+                                                                {
+                                                                    if (contentType.StartsWith("text/html"))
+                                                                    {
+                                                                        var parameters = Parse(stream2, response2.CharacterSet);
+                                                                        cookies.Add(parameters[0], parameters[1]);
+                                                                    }
+                                                                    if (contentType.StartsWith("image"))
+                                                                    {
+                                                                        imgStore = Image.FromStream(stream2);
+                                                                        if (imgStore.Width > 10 && imgStore.Height > 10)
+                                                                        {
+                                                                            imgPictureBox.Image = imgStore;
+                                                                            filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
+                                                                            if (SaveFile)
+                                                                            {
+                                                                                try
+                                                                                { SaveImage(imgStore, filenameTextBox); }
+                                                                                catch
+                                                                                { }
+                                                                            }
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
+                                    catch
+                                    {
+                                        MessageBox.Show("Image does not exist!");
+                                    }
                                 }
                             }
                         }
                     }
-                    catch
-                    {
-                        MessageBox.Show("Image does not exist!");
-                    }
-                    Cursor.Current = Cursors.Default;
-
+                    catch { }
                 }
                 else
                 {
                     initialValue = int.Parse(range1TextBox.Text);
-                    batchTimer.Start();
+                    newBatchTimer.Start();
                 }
             }
             else
                 MessageBox.Show("You are not connected to the Internet!");
         }
-
+       
         #region Methods for Laziness
         private bool IsEqualBlank(TextBox sTextBox)
         {
@@ -315,13 +360,51 @@ namespace Batch_Image_DL_Lite
             if (mfRadioButton.Checked)
             { /* For future possible additions */ }
             else if (mhRadioButton.Checked)
-                part2Url = part2Url.Substring(0, part2Url.LastIndexOf('?'));
+            {
+                try
+                { part2Url = part2Url.Substring(0, part2Url.LastIndexOf('?')); }
+                catch { /* Silent Failure Here */ }
+            }
 
-            sExt = part2Url.Substring(part2Url.LastIndexOf('.'));
+            if (mhRadioButton.Checked)
+            {
+                try
+                { sExt = part2Url.Substring(part2Url.LastIndexOf('.'), part2Url.LastIndexOf('?')); }
+                catch
+                { sExt = part2Url.Substring(part2Url.LastIndexOf('.')); }
+            }
+            else
+                sExt = part2Url.Substring(part2Url.LastIndexOf('.'));
+
             //http://stackoverflow.com/a/3732864/3472690
             part2Url = part2Url.Substring(0, part2Url.IndexOfAny("0123456789".ToCharArray()));
 
             return part1Url + part2Url;
+        }
+
+        public List<Uri> FetchLinksFromSource(string htmlSource)
+        {
+            //http://stackoverflow.com/questions/138839/how-do-you-parse-an-html-string-for-image-tags-to-get-at-the-src-information
+            List<Uri> links = new List<Uri>();
+            string regexImgSrc = "src=[\"'](.+?)[\"'].*?>";
+            MatchCollection matchesImgSrc = Regex.Matches(htmlSource, regexImgSrc, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            foreach (Match m in matchesImgSrc)
+            {
+                string href = m.Groups[1].Value;
+                foreach (string x in imgExt)
+                {
+                    if (href.Contains(x))
+                    {//http://stackoverflow.com/questions/2912476/using-c-sharp-to-check-if-string-contains-a-string-in-string-array
+                        if ((mfRadioButton.Checked && href.Contains("z.mfcdn.net/store")) || (mhRadioButton.Checked && href.Contains("a.mhcdn.net/store")))
+                            if (href.Contains("compressed"))
+                            {
+                                links.Add(new Uri(href.Substring(0, href.LastIndexOf(x) + x.Length)));
+                                break;
+                            }
+                    }
+                }
+            }
+            return links;
         }
 
         private string UrlParser(string input, ComboBox inputCBox)
@@ -343,7 +426,8 @@ namespace Batch_Image_DL_Lite
 
             ToggleInterfaces();
             parametersGroupBox.Enabled = false;
-            ProcessImages(false);
+            ParseImageLinks(false);
+            //ProcessImages(false);
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -362,7 +446,8 @@ namespace Batch_Image_DL_Lite
             previewBatchButton.Enabled = false;
             stopBatchPreviewButton.Enabled = true;
             this.Cursor = Cursors.WaitCursor;
-            ProcessImages(true);
+            //ProcessImages(true);
+            ParseImageLinks(true);
         }
 
         private ImageFormat DetectFormat(string fileName)
@@ -385,104 +470,11 @@ namespace Batch_Image_DL_Lite
             SaveImage(iInput, sTextbox.Text);
         }
 
-        private void batchTimer_Tick(object sender, EventArgs e)
-        {
-            if (initialValue < int.Parse(range2TextBox.Text) + 1)
-            {
-                string tempURL = UrlParser(urlTextBox.Text, extComboBox) + (PrepValue(initialValue)) + (PrepExt(extComboBox.Text));
-
-                var cookies = new NameValueCollection();
-
-                try
-                {
-                    for (int tries = 0; tries < 2; tries++)
-                    {
-                        using (var response = Builder(tempURL, new Uri(tempURL).Host, cookies))
-                        {
-                            using (var stream = response.GetResponseStream())
-                            {
-                                string contentType = response.ContentType.ToLowerInvariant();
-                                if (contentType.StartsWith("text/html"))
-                                {
-                                    var parameters = Parse(stream, response.CharacterSet);
-                                    cookies.Add(parameters[0], parameters[1]);
-                                }
-                                if (contentType.StartsWith("image"))
-                                {
-                                    imgStore = Image.FromStream(stream);
-                                    if (imgStore.Width > 10 && imgStore.Height > 10)
-                                    {
-                                        imgPictureBox.Image = imgStore;
-                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                        if (SaveFile)
-                                        {
-                                            try
-                                            { SaveImage(imgStore, filenameTextBox); }
-                                            catch
-                                            { }
-                                        }
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        tempURL = UrlParser(urlTextBox.Text, extComboBox) + (PrepValue(initialValue)) + "_" + (PrepValue(initialValue + 1)) + PrepExt(extComboBox);
-                                        cookies = new NameValueCollection();
-
-                                        using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                        {
-                                            using (var stream2 = response2.GetResponseStream())
-                                            {
-                                                if (contentType.StartsWith("text/html"))
-                                                {
-                                                    var parameters = Parse(stream2, response2.CharacterSet);
-                                                    cookies.Add(parameters[0], parameters[1]);
-                                                }
-                                                if (contentType.StartsWith("image"))
-                                                {
-                                                    imgStore = Image.FromStream(stream2);
-                                                    if (imgStore.Width > 10 && imgStore.Height > 10)
-                                                    {
-                                                        imgPictureBox.Image = imgStore;
-                                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                        if (SaveFile)
-                                                        {
-                                                            try
-                                                            { SaveImage(imgStore, filenameTextBox); }
-                                                            catch
-                                                            { }
-                                                        }
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch
-                { /*Silent fail for in batch processes*/ }
-
-                Cursor.Current = Cursors.Default;
-                initialValue++;
-            }
-            else
-            {
-                batchTimer.Stop();
-                parametersGroupBox.Enabled = true;
-                ToggleInterfaces();
-                this.Cursor = Cursors.Default;
-                MessageBox.Show("Process completed!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
         private void stopBatchPreviewButton_Click(object sender, EventArgs e)
         {
             stopBatchPreviewButton.Enabled = false;
             for (int iii = 0; iii < 3; iii++)
-                batchTimer.Stop();
+                newBatchTimer.Stop();
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -511,7 +503,7 @@ namespace Batch_Image_DL_Lite
                     return;
                 }
             }
-            ProcessImages(false);
+            ParseImageLinks(false);//ProcessImages(false);
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -541,7 +533,7 @@ namespace Batch_Image_DL_Lite
             dlBatchButton.Enabled = false;
             stopDlBatchButton.Enabled = true;
             this.Cursor = Cursors.WaitCursor;
-            ProcessImages(true);
+            ParseImageLinks(true);//ProcessImages(true);
         }
 
         private void stopDlBatchButton_Click(object sender, EventArgs e)
@@ -549,7 +541,7 @@ namespace Batch_Image_DL_Lite
             SaveFile = false;
             stopDlBatchButton.Enabled = false;
             for (int iii = 0; iii < 3; iii++)
-                batchTimer.Stop();
+                newBatchTimer.Stop();
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -566,7 +558,7 @@ namespace Batch_Image_DL_Lite
             //http://stackoverflow.com/questions/892369/how-can-i-display-a-tooltip-showing-the-value-of-a-trackbar-in-winforms
             infoToolTip.SetToolTip(speedTrackBar, intStartingValue + "ms");
 
-            batchTimer.Interval = intStartingValue;
+            newBatchTimer.Interval = intStartingValue;
         }
 
         private void numbersOnlyTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -581,6 +573,125 @@ namespace Batch_Image_DL_Lite
         private void aboutButton_Click(object sender, EventArgs e)
         {
             new AboutWin().ShowDialog();
+        }
+
+        private void newBatchTimer_Tick(object sender, EventArgs e)
+        {
+            if (initialValue < int.Parse(range2TextBox.Text) + 1)
+            {
+                string tempURL = UrlParser(urlTextBox.Text, extComboBox) + initialValue + (PrepExt(extComboBox.Text)); //string tempURL = urlTextBox.Text;
+
+                var cookies = new NameValueCollection();
+
+                try
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
+                    request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                        {
+                            List<Uri> links = FetchLinksFromSource(sr.ReadToEnd());
+
+                            if (links.Count == 0)
+                                return;
+                            else
+                            {
+                                tempURL = links[0].ToString();
+
+                                try
+                                {
+                                    for (int tries = 0; tries < 2; tries++)
+                                    {
+                                        using (response = Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                        {
+                                            using (var stream = response.GetResponseStream())
+                                            {
+                                                string contentType = response.ContentType.ToLowerInvariant();
+                                                if (contentType.StartsWith("text/html"))
+                                                {
+                                                    var parameters = Parse(stream, response.CharacterSet);
+                                                    cookies.Add(parameters[0], parameters[1]);
+                                                }
+                                                if (contentType.StartsWith("image"))
+                                                {
+                                                    imgStore = Image.FromStream(stream);
+                                                    if (imgStore.Width > 10 && imgStore.Height > 10)
+                                                    {
+                                                        imgPictureBox.Image = imgStore;
+                                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
+                                                        if (SaveFile)
+                                                        {
+                                                            try
+                                                            { SaveImage(imgStore, filenameTextBox); }
+                                                            catch
+                                                            { }
+                                                        }
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        //tempURL = UrlParser(urlTextBox.Text, extComboBox) + ((PrepValue(range1TextBox.Text)) + "_" + (PrepValue(int.Parse(range1TextBox.Text) + 1))) + (PrepExt(extComboBox.Text));
+                                                        cookies = new NameValueCollection();
+
+                                                        using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                                        {
+                                                            using (var stream2 = response2.GetResponseStream())
+                                                            {
+                                                                if (contentType.StartsWith("text/html"))
+                                                                {
+                                                                    var parameters = Parse(stream2, response2.CharacterSet);
+                                                                    cookies.Add(parameters[0], parameters[1]);
+                                                                }
+                                                                if (contentType.StartsWith("image"))
+                                                                {
+                                                                    imgStore = Image.FromStream(stream2);
+                                                                    if (imgStore.Width > 10 && imgStore.Height > 10)
+                                                                    {
+                                                                        imgPictureBox.Image = imgStore;
+                                                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
+                                                                        if (SaveFile)
+                                                                        {
+                                                                            try
+                                                                            { SaveImage(imgStore, filenameTextBox); }
+                                                                            catch
+                                                                            { }
+                                                                        }
+                                                                    }
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("Image does not exist!");
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { /* Silent Failure */ }
+
+                Cursor.Current = Cursors.Default;
+                initialValue++;
+            }
+            else
+            {
+                newBatchTimer.Stop();
+                parametersGroupBox.Enabled = true;
+                ToggleInterfaces();
+                this.Cursor = Cursors.Default;
+                MessageBox.Show("Process completed!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

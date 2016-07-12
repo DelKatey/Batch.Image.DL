@@ -84,6 +84,7 @@
             this.filenameTextBox = new System.Windows.Forms.TextBox();
             this.batchTimer = new System.Windows.Forms.Timer(this.components);
             this.infoToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.newBatchTimer = new System.Windows.Forms.Timer(this.components);
             this.parametersGroupBox.SuspendLayout();
             this.panel15.SuspendLayout();
             this.panel16.SuspendLayout();
@@ -673,6 +674,11 @@
             this.batchTimer.Interval = 500;
             this.batchTimer.Tick += new System.EventHandler(this.batchTimer_Tick);
             // 
+            // newBatchTimer
+            // 
+            this.newBatchTimer.Interval = 500;
+            this.newBatchTimer.Tick += new System.EventHandler(this.newBatchTimer_Tick);
+            // 
             // MainWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -777,6 +783,7 @@
         private System.Windows.Forms.RadioButton mfRadioButton;
         private System.Windows.Forms.Panel panel27;
         private System.Windows.Forms.Button aboutButton;
+        private System.Windows.Forms.Timer newBatchTimer;
     }
 }
 

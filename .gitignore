@@ -155,3 +155,5 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 /Screenshots/isequalblank.png
+*.URL
+/Screenshots/multiple_instances.png
