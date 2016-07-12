@@ -24,6 +24,7 @@ namespace Batch_Image_DL_Lite
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
         private string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
         private static bool MangaMode = true;
+        private int intStartPage = 0;
 
         public MainWin()
         {
@@ -145,8 +146,10 @@ namespace Batch_Image_DL_Lite
             }
         }
 
-        private void ParseImageLinks(bool batchCheck)
+        private bool ParseImageLinks(bool batchCheck)
         {
+            bool result = true;
+
             bool NetworkAvailability = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
             if (NetworkAvailability)
             {
@@ -160,7 +163,7 @@ namespace Batch_Image_DL_Lite
                         ToggleInterfaces();
                         parametersGroupBox.Enabled = true;
                         this.Cursor = Cursors.Default;
-                        return;
+                        return false;
                     }
                     else if (mhRadioButton.Checked && !urlTextBox.Text.Contains("mangahere"))
                     {
@@ -168,7 +171,15 @@ namespace Batch_Image_DL_Lite
                         ToggleInterfaces();
                         parametersGroupBox.Enabled = true;
                         this.Cursor = Cursors.Default;
-                        return;
+                        return false;
+                    }
+                    else if (xkcdRadioButton.Checked && (!urlTextBox.Text.Contains("xkcd") || urlTextBox.Text.Contains("explain") || urlTextBox.Text.Contains("wiki")))
+                    {
+                        MessageBox.Show("The program can currently only accept Xkcd links!", "Invalid URL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ToggleInterfaces();
+                        parametersGroupBox.Enabled = true;
+                        this.Cursor = Cursors.Default;
+                        return false;
                     }
                 }
 
@@ -192,10 +203,10 @@ namespace Batch_Image_DL_Lite
                                 List<Uri> links = FetchLinksFromSource(sr.ReadToEnd());
 
                                 if (links.Count == 0)
-                                    return;
+                                    return false;
                                 else
                                 {
-                                    tempURL = links[0].ToString();
+                                    tempURL = links[0].ToString().Replace("file://", "http://");
 
                                     try
                                     {
@@ -247,6 +258,7 @@ namespace Batch_Image_DL_Lite
                                                                         {
                                                                             imgPictureBox.Image = imgStore;
                                                                             filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
+                                                                                
                                                                             if (SaveFile)
                                                                             {
                                                                                 try
@@ -267,22 +279,34 @@ namespace Batch_Image_DL_Lite
                                     }
                                     catch
                                     {
+                                        
                                         MessageBox.Show("Image does not exist!");
+                                        return false;
                                     }
                                 }
                             }
                         }
                     }
-                    catch { }
+                    catch 
+                    { 
+                        if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
+                            filenameTextBox.Text = "ERROR 404!";
+                    }
                 }
                 else
                 {
-                    initialValue = int.Parse(range1TextBox.Text);
+                    intStartPage = initialValue = int.Parse(range1TextBox.Text);
+                    pageRangeBtwnLabel.Text = "of";
                     newBatchTimer.Start();
                 }
+
+                return result;
             }
             else
+            {
                 MessageBox.Show("You are not connected to the Internet!");
+                return false;
+            }
         }
        
         #region Methods for Laziness
@@ -301,9 +325,14 @@ namespace Batch_Image_DL_Lite
         {
             if (!Batched)
             {
-                if (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox))
+                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox)))
                 {
                     MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : (IsEqualBlank(extComboBox) ? "extension " : "first page number ")) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return true;
+                }
+                else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox)  || IsEqualBlank(range1TextBox)))
+                {
+                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox) ? "URL " : "first page number ")) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else
@@ -311,9 +340,14 @@ namespace Batch_Image_DL_Lite
             }
             else
             {
-                if (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox))
+                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox)))
                 {
                     MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : (IsEqualBlank(extComboBox) ? "extension " : (IsEqualBlank(range1TextBox) ? "first page number " : "last page number "))) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return true;
+                }
+                else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox)))
+                {
+                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox) ? "URL " : (IsEqualBlank(range1TextBox) ? "first page number " : "last page number "))) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else
@@ -353,8 +387,9 @@ namespace Batch_Image_DL_Lite
 
         private string UrlParser(string input, out string sExt)
         {
-            string part1Url = input.Substring(0, input.LastIndexOf('/') + 1);
-            string part2Url = input.Substring(input.LastIndexOf('/') + 1);
+
+            string part1Url = (!xkcdRadioButton.Checked) ? input.Substring(0, input.LastIndexOf('/') + 1) : "http://xkcd.com/";
+            string part2Url = (!xkcdRadioButton.Checked) ? input.Substring(input.LastIndexOf('/') + 1) : String.Empty;
 
             if (mfRadioButton.Checked)
             { /* For future possible additions */ }
@@ -364,19 +399,31 @@ namespace Batch_Image_DL_Lite
                 { part2Url = part2Url.Substring(0, part2Url.LastIndexOf('?')); }
                 catch { /* Silent Failure Here */ }
             }
+            else if (xkcdRadioButton.Checked)
+            { /* For future possible additions */ }
 
             if (mhRadioButton.Checked)
             {
                 try
                 { sExt = part2Url.Substring(part2Url.LastIndexOf('.'), part2Url.LastIndexOf('?')); }
                 catch
-                { sExt = part2Url.Substring(part2Url.LastIndexOf('.')); }
+                {
+                    try
+                    { sExt = part2Url.Substring(part2Url.LastIndexOf('.')); }
+                    catch
+                    { sExt = ".html"; }
+                }
             }
+            else if (xkcdRadioButton.Checked)
+                sExt = "";
             else
                 sExt = part2Url.Substring(part2Url.LastIndexOf('.'));
 
             //http://stackoverflow.com/a/3732864/3472690
-            part2Url = part2Url.Substring(0, part2Url.IndexOfAny("0123456789".ToCharArray()));
+            try
+            { part2Url = part2Url.Substring(0, part2Url.IndexOfAny("0123456789".ToCharArray())); }
+            catch
+            { part2Url = "";  }
 
             return part1Url + part2Url;
         }
@@ -395,11 +442,18 @@ namespace Batch_Image_DL_Lite
                     if (href.Contains(x))
                     {//http://stackoverflow.com/questions/2912476/using-c-sharp-to-check-if-string-contains-a-string-in-string-array
                         if ((mfRadioButton.Checked && href.Contains("z.mfcdn.net/store")) || (mhRadioButton.Checked && href.Contains("a.mhcdn.net/store")))
+                        {
                             if (href.Contains("compressed"))
                             {
                                 links.Add(new Uri(href.Substring(0, href.LastIndexOf(x) + x.Length)));
                                 break;
                             }
+                        }
+                        else if (xkcdRadioButton.Checked && href.Contains("comics"))
+                        {
+                            links.Add(new Uri(href.Substring(0, href.LastIndexOf(x) + x.Length)));
+                            break;
+                        }
                     }
                 }
             }
@@ -425,9 +479,9 @@ namespace Batch_Image_DL_Lite
 
             ToggleInterfaces();
             parametersGroupBox.Enabled = false;
-            ParseImageLinks(false);
+            if (ParseImageLinks(false))
+                ToggleInterfaces();
             parametersGroupBox.Enabled = true;
-            ToggleInterfaces();
             this.Cursor = Cursors.Default;
         }
 
@@ -472,6 +526,8 @@ namespace Batch_Image_DL_Lite
             stopBatchPreviewButton.Enabled = false;
             for (int iii = 0; iii < 3; iii++)
                 newBatchTimer.Stop();
+            range1TextBox.Text = intStartPage.ToString();
+            pageRangeBtwnLabel.Text = "to";
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -500,9 +556,11 @@ namespace Batch_Image_DL_Lite
                     return;
                 }
             }
-            ParseImageLinks(false);
+
+            if (ParseImageLinks(false))
+                ToggleInterfaces();
+
             parametersGroupBox.Enabled = true;
-            ToggleInterfaces();
             this.Cursor = Cursors.Default;
         }
 
@@ -539,6 +597,8 @@ namespace Batch_Image_DL_Lite
             stopDlBatchButton.Enabled = false;
             for (int iii = 0; iii < 3; iii++)
                 newBatchTimer.Stop();
+            pageRangeBtwnLabel.Text = "to";
+            range1TextBox.Text = intStartPage.ToString();
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -597,7 +657,7 @@ namespace Batch_Image_DL_Lite
                                 return;
                             else
                             {
-                                tempURL = links[0].ToString();
+                                tempURL = links[0].ToString().Replace("file://", "http://");
 
                                 try
                                 {
@@ -669,25 +729,53 @@ namespace Batch_Image_DL_Lite
                                 }
                                 catch
                                 {
-                                    MessageBox.Show("Image does not exist!");
+                                   MessageBox.Show("Image does not exist!");
                                 }
                             }
                         }
                     }
                 }
-                catch { /* Silent Failure */ }
+                catch 
+                { 
+                    /* Silent Failure */
+                    if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
+                        filenameTextBox.Text = "ERROR 404!";
+                }
 
-                Cursor.Current = Cursors.Default;
+                //Cursor.Current = Cursors.Default;
+                range1TextBox.Text = initialValue.ToString();
                 initialValue++;
             }
             else
             {
                 newBatchTimer.Stop();
+                pageRangeBtwnLabel.Text = "to";
+                range1TextBox.Text = intStartPage.ToString();
                 parametersGroupBox.Enabled = true;
                 ToggleInterfaces();
                 this.Cursor = Cursors.Default;
                 MessageBox.Show("Process completed!", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void mfRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            extComboBox.Text = ".jpg";
+        }
+
+        private void mhRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            extComboBox.Text = ".jpg";
+        }
+
+        private void xkcdRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            extComboBox.Text = "";
+        }
+
+        private void extComboBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

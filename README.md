@@ -10,18 +10,21 @@ First, you need to get an URL that the program can work off of. Currently, the p
 
 - MangaHere (example: http://www.mangahere.co/manga/koko_ni_iru_yo/v01/c001/43.html)
 - MangaFox (example: http://mangafox.me/manga/koko_ni_iru_yo/v01/c001/3.html)
+- xkcd (example: https://xkcd.com/78/)
 
 The above URLS can be obtained by copying it from the address bar of a page of the manga.
 
-After getting the URL, feed it into the "Main URL" field, then provide the desired starting and ending page numbers. This can be, for example, "2" and "43" respectively, if using the above examples, but can also be any number in between, so long as the ending page number is always higher than the starting page number.
+After getting the URL, feed it into the "Main URL" field, then provide the desired starting and ending page numbers. This can be, for example, "2" and "43" respectively, if using the above examples (excluding xkcd), but can also be any number in between, so long as the ending page number is always higher than the starting page number.
 
  The starting page number always has to be filled no matter which mode you are using the program in, but the ending page number is only needed for the Batch modes.
 
  The Preview modes, as of now, just streams the images, whereas the Download modes will stream, and then subsequently save the image streams to a designated path. In the future, this may very well change.
  
-## Notes
+## "Changelog"
 
-This version has been completely reworked, using a different method to get the images, with much more compatibility across various different image naming schemes. Due to that, its speed is now slower, until a way has been found to speed up the process without compromising the compatability improvements.
+- 12 July 2016: Initial build version of 0.0.1.0. Able to parse and stream/download images (sequentially) from two different manga sites, albeit only part of the wide selection available due to parsing issues.
+- 13 July 2016: Reworked methods to enable wider compatability with the available selection of manga from the two sites, at the cost of processing speed.
+- 13 July 2016: Added xkcd support.
  
 ## Installation
 

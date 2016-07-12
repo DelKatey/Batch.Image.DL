@@ -56,7 +56,7 @@
             this.panel11 = new System.Windows.Forms.Panel();
             this.range2TextBox = new System.Windows.Forms.TextBox();
             this.panel14 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
+            this.pageRangeBtwnLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -84,6 +84,7 @@
             this.filenameTextBox = new System.Windows.Forms.TextBox();
             this.infoToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.newBatchTimer = new System.Windows.Forms.Timer(this.components);
+            this.xkcdRadioButton = new System.Windows.Forms.RadioButton();
             this.parametersGroupBox.SuspendLayout();
             this.panel15.SuspendLayout();
             this.panel16.SuspendLayout();
@@ -211,6 +212,7 @@
             this.extComboBox.Size = new System.Drawing.Size(55, 21);
             this.extComboBox.TabIndex = 1;
             this.extComboBox.Text = ".jpg";
+            this.extComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.extComboBox_KeyPress);
             // 
             // panel30
             // 
@@ -386,7 +388,7 @@
             // 
             // panel14
             // 
-            this.panel14.Controls.Add(this.label3);
+            this.panel14.Controls.Add(this.pageRangeBtwnLabel);
             this.panel14.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel14.Location = new System.Drawing.Point(0, 5);
             this.panel14.Name = "panel14";
@@ -394,15 +396,15 @@
             this.panel14.Size = new System.Drawing.Size(25, 20);
             this.panel14.TabIndex = 0;
             // 
-            // label3
+            // pageRangeBtwnLabel
             // 
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(0, 3);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(18, 14);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "to";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.pageRangeBtwnLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pageRangeBtwnLabel.Location = new System.Drawing.Point(0, 3);
+            this.pageRangeBtwnLabel.Name = "pageRangeBtwnLabel";
+            this.pageRangeBtwnLabel.Size = new System.Drawing.Size(18, 14);
+            this.pageRangeBtwnLabel.TabIndex = 0;
+            this.pageRangeBtwnLabel.Text = "to";
+            this.pageRangeBtwnLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // panel1
             // 
@@ -431,6 +433,7 @@
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(5, 5);
             this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 1, 3, 3);
             this.groupBox3.Size = new System.Drawing.Size(477, 87);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
@@ -438,12 +441,13 @@
             // 
             // siteGroupBox
             // 
+            this.siteGroupBox.Controls.Add(this.xkcdRadioButton);
             this.siteGroupBox.Controls.Add(this.mhRadioButton);
             this.siteGroupBox.Controls.Add(this.mfRadioButton);
             this.siteGroupBox.Dock = System.Windows.Forms.DockStyle.Right;
-            this.siteGroupBox.Location = new System.Drawing.Point(385, 16);
+            this.siteGroupBox.Location = new System.Drawing.Point(385, 14);
             this.siteGroupBox.Name = "siteGroupBox";
-            this.siteGroupBox.Size = new System.Drawing.Size(89, 68);
+            this.siteGroupBox.Size = new System.Drawing.Size(89, 70);
             this.siteGroupBox.TabIndex = 3;
             this.siteGroupBox.TabStop = false;
             this.siteGroupBox.Text = "Site";
@@ -451,34 +455,36 @@
             // mhRadioButton
             // 
             this.mhRadioButton.AutoSize = true;
-            this.mhRadioButton.Location = new System.Drawing.Point(7, 41);
+            this.mhRadioButton.Location = new System.Drawing.Point(7, 33);
             this.mhRadioButton.Name = "mhRadioButton";
             this.mhRadioButton.Size = new System.Drawing.Size(81, 17);
             this.mhRadioButton.TabIndex = 1;
             this.mhRadioButton.Text = "MangaHere";
             this.mhRadioButton.UseVisualStyleBackColor = true;
+            this.mhRadioButton.CheckedChanged += new System.EventHandler(this.mhRadioButton_CheckedChanged);
             // 
             // mfRadioButton
             // 
             this.mfRadioButton.AutoSize = true;
             this.mfRadioButton.Checked = true;
-            this.mfRadioButton.Location = new System.Drawing.Point(7, 20);
+            this.mfRadioButton.Location = new System.Drawing.Point(7, 15);
             this.mfRadioButton.Name = "mfRadioButton";
             this.mfRadioButton.Size = new System.Drawing.Size(75, 17);
             this.mfRadioButton.TabIndex = 0;
             this.mfRadioButton.TabStop = true;
             this.mfRadioButton.Text = "MangaFox";
             this.mfRadioButton.UseVisualStyleBackColor = true;
+            this.mfRadioButton.CheckedChanged += new System.EventHandler(this.mfRadioButton_CheckedChanged);
             // 
             // panel27
             // 
             this.panel27.Controls.Add(this.panel13);
             this.panel27.Controls.Add(this.panel12);
             this.panel27.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel27.Location = new System.Drawing.Point(3, 16);
+            this.panel27.Location = new System.Drawing.Point(3, 14);
             this.panel27.Name = "panel27";
             this.panel27.Padding = new System.Windows.Forms.Padding(0, 0, 7, 0);
-            this.panel27.Size = new System.Drawing.Size(319, 68);
+            this.panel27.Size = new System.Drawing.Size(319, 70);
             this.panel27.TabIndex = 2;
             // 
             // panel13
@@ -493,7 +499,7 @@
             this.panel13.Location = new System.Drawing.Point(0, 34);
             this.panel13.Name = "panel13";
             this.panel13.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.panel13.Size = new System.Drawing.Size(312, 34);
+            this.panel13.Size = new System.Drawing.Size(312, 36);
             this.panel13.TabIndex = 1;
             // 
             // stopDlBatchButton
@@ -502,7 +508,7 @@
             this.stopDlBatchButton.Enabled = false;
             this.stopDlBatchButton.Location = new System.Drawing.Point(191, 5);
             this.stopDlBatchButton.Name = "stopDlBatchButton";
-            this.stopDlBatchButton.Size = new System.Drawing.Size(120, 24);
+            this.stopDlBatchButton.Size = new System.Drawing.Size(120, 26);
             this.stopDlBatchButton.TabIndex = 6;
             this.stopDlBatchButton.Text = "Stop Batch Download";
             this.stopDlBatchButton.UseVisualStyleBackColor = true;
@@ -513,7 +519,7 @@
             this.panel25.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel25.Location = new System.Drawing.Point(186, 5);
             this.panel25.Name = "panel25";
-            this.panel25.Size = new System.Drawing.Size(5, 24);
+            this.panel25.Size = new System.Drawing.Size(5, 26);
             this.panel25.TabIndex = 5;
             // 
             // dlBatchButton
@@ -521,7 +527,7 @@
             this.dlBatchButton.Dock = System.Windows.Forms.DockStyle.Left;
             this.dlBatchButton.Location = new System.Drawing.Point(90, 5);
             this.dlBatchButton.Name = "dlBatchButton";
-            this.dlBatchButton.Size = new System.Drawing.Size(96, 24);
+            this.dlBatchButton.Size = new System.Drawing.Size(96, 26);
             this.dlBatchButton.TabIndex = 4;
             this.dlBatchButton.Text = "Batch Download";
             this.dlBatchButton.UseVisualStyleBackColor = true;
@@ -532,7 +538,7 @@
             this.panel22.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel22.Location = new System.Drawing.Point(85, 5);
             this.panel22.Name = "panel22";
-            this.panel22.Size = new System.Drawing.Size(5, 24);
+            this.panel22.Size = new System.Drawing.Size(5, 26);
             this.panel22.TabIndex = 3;
             // 
             // dlButton
@@ -540,7 +546,7 @@
             this.dlButton.Dock = System.Windows.Forms.DockStyle.Left;
             this.dlButton.Location = new System.Drawing.Point(5, 5);
             this.dlButton.Name = "dlButton";
-            this.dlButton.Size = new System.Drawing.Size(80, 24);
+            this.dlButton.Size = new System.Drawing.Size(80, 26);
             this.dlButton.TabIndex = 2;
             this.dlButton.Text = "Download";
             this.dlButton.UseVisualStyleBackColor = true;
@@ -551,7 +557,7 @@
             this.panel20.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel20.Location = new System.Drawing.Point(0, 5);
             this.panel20.Name = "panel20";
-            this.panel20.Size = new System.Drawing.Size(5, 24);
+            this.panel20.Size = new System.Drawing.Size(5, 26);
             this.panel20.TabIndex = 1;
             // 
             // panel12
@@ -673,6 +679,17 @@
             this.newBatchTimer.Interval = 500;
             this.newBatchTimer.Tick += new System.EventHandler(this.newBatchTimer_Tick);
             // 
+            // xkcdRadioButton
+            // 
+            this.xkcdRadioButton.AutoSize = true;
+            this.xkcdRadioButton.Location = new System.Drawing.Point(7, 51);
+            this.xkcdRadioButton.Name = "xkcdRadioButton";
+            this.xkcdRadioButton.Size = new System.Drawing.Size(50, 17);
+            this.xkcdRadioButton.TabIndex = 2;
+            this.xkcdRadioButton.Text = "Xkcd";
+            this.xkcdRadioButton.UseVisualStyleBackColor = true;
+            this.xkcdRadioButton.CheckedChanged += new System.EventHandler(this.xkcdRadioButton_CheckedChanged);
+            // 
             // MainWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -749,7 +766,7 @@
         private System.Windows.Forms.Panel panel11;
         private System.Windows.Forms.TextBox range2TextBox;
         private System.Windows.Forms.Panel panel14;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label pageRangeBtwnLabel;
         private System.Windows.Forms.Button stopDlBatchButton;
         private System.Windows.Forms.Panel panel25;
         private System.Windows.Forms.Button dlBatchButton;
@@ -777,6 +794,7 @@
         private System.Windows.Forms.Panel panel27;
         private System.Windows.Forms.Button aboutButton;
         private System.Windows.Forms.Timer newBatchTimer;
+        private System.Windows.Forms.RadioButton xkcdRadioButton;
     }
 }
 
