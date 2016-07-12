@@ -11,7 +11,7 @@ First, you need to get an URL that the program can work off of. Currently, the p
 - MangaHere (example: http://www.mangahere.co/manga/koko_ni_iru_yo/v01/c001/43.html)
 - MangaFox (example: http://mangafox.me/manga/koko_ni_iru_yo/v01/c001/3.html)
 
-The above URLS can be obtained by right-clicking an image, then selecting "View Image" in Firefox, or "Open image in new tab" in Chrome.
+The above URLS can be obtained by copying it from the address bar of a page of the manga.
 
 After getting the URL, feed it into the "Main URL" field, then provide the desired starting and ending page numbers. This can be, for example, "2" and "43" respectively, if using the above examples, but can also be any number in between, so long as the ending page number is always higher than the starting page number.
 
