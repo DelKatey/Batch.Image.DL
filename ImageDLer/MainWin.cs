@@ -18,7 +18,6 @@ namespace Batch_Image_DL_Lite
     {
         Image imgStore;
         readonly CookieContainer cookiecontainer = new CookieContainer();
-        private ImageFormat imgF = ImageFormat.Jpeg;
         private int initialValue;
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
         private string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
