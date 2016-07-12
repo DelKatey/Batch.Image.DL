@@ -28,13 +28,12 @@ namespace Batch_Image_DL_Lite
             InitializeComponent();
         }
 
-        #region Builder code thanks to rene @ stackoverflow
+        #region Builder code //http://stackoverflow.com/a/24590419/3472690
         private HttpWebResponse Builder(string url, string host, NameValueCollection cookies)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = WebRequestMethods.Http.Get;
             request.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-            // _request.Headers.Set(HttpRequestHeader.AcceptEncoding, "gzip,deflate,sdch");
             request.Headers.Set(HttpRequestHeader.AcceptLanguage, "en-US,en;q=0.8");
             request.Headers.Set(HttpRequestHeader.CacheControl, "max-age=0");
 
@@ -58,8 +57,6 @@ namespace Batch_Image_DL_Lite
             return (HttpWebResponse)request.GetResponse();
         }
 
-        // find in the html and return the three parameters in a string array
-        // setCookie('YPF8827340282Jdskjhfiw_928937459182JAX666', '127.0.0.1', 10);
         private static string[] Parse(Stream _stream, string encoding)
         {
             const string setCookieCall = "setCookie('";
@@ -89,6 +86,7 @@ namespace Batch_Image_DL_Lite
         }
         #endregion
 
+        #region Preparation Methods
         private string PrepValue(int iValue)
         {
             return PrepValue(iValue.ToString());
@@ -118,6 +116,7 @@ namespace Batch_Image_DL_Lite
         {
             return PrepExt(sComboBox.Text);
         }
+        #endregion
 
         private void ToggleInterfaces()
         {
@@ -185,7 +184,7 @@ namespace Batch_Image_DL_Lite
                                                 catch
                                                 { }
                                             }
-                                            break; // we're done, get out
+                                            break;
                                         }
                                         else
                                         {
@@ -216,7 +215,7 @@ namespace Batch_Image_DL_Lite
                                                                 { }
                                                             }
                                                         }
-                                                        break; // we're done, get out
+                                                        break;
                                                     }
                                                 }
                                             }
@@ -311,7 +310,6 @@ namespace Batch_Image_DL_Lite
         {
             string part1Url = input.Substring(0, input.LastIndexOf('/') + 1);
             string part2Url = input.Substring(input.LastIndexOf('/') + 1);
-            //sExt = ".jpg";
 
             if (mfRadioButton.Checked)
             { /* For future possible additions */ }
@@ -413,7 +411,7 @@ namespace Batch_Image_DL_Lite
                                     imgStore = Image.FromStream(stream);
                                     if (imgStore.Width > 10 && imgStore.Height > 10)
                                     {
-                                        imgPictureBox.Image = imgStore;//Image.FromStream(stream);
+                                        imgPictureBox.Image = imgStore;
                                         filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
                                         if (SaveFile)
                                         {
@@ -422,7 +420,7 @@ namespace Batch_Image_DL_Lite
                                             catch
                                             { }
                                         }
-                                        break; // we're done, get out
+                                        break;
                                     }
                                     else
                                     {
@@ -453,7 +451,7 @@ namespace Batch_Image_DL_Lite
                                                             { }
                                                         }
                                                     }
-                                                    break; // we're done, get out
+                                                    break;
                                                 }
                                             }
                                         }
@@ -464,9 +462,8 @@ namespace Batch_Image_DL_Lite
                     }
                 }
                 catch
-                {//Silent fail for in batch processes
-                    //MessageBox.Show("Image does not exist!");
-                }
+                { /*Silent fail for in batch processes*/ }
+
                 Cursor.Current = Cursors.Default;
                 initialValue++;
             }
