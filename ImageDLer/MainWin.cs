@@ -241,6 +241,7 @@ namespace Batch_Image_DL_Lite
                 MessageBox.Show("You are not connected to the Internet!");
         }
 
+        #region Methods for Laziness
         private bool IsEqualBlank(TextBox sTextBox)
         {
             return String.IsNullOrWhiteSpace(sTextBox.Text);
@@ -250,6 +251,7 @@ namespace Batch_Image_DL_Lite
         {
             return String.IsNullOrWhiteSpace(sComboBox.Text);
         }
+        #endregion
 
         private bool CheckForBlanks()
         {
