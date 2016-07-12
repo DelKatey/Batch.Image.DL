@@ -65,25 +65,27 @@ namespace Batch_Image_DL_Lite
             const string setCookieCall = "setCookie('";
 
             // copy html as string
-            var ms = new MemoryStream();
-            _stream.CopyTo(ms);
-            var html = Encoding.GetEncoding(encoding).GetString(ms.ToArray());
-
-            // find setCookie call
-            var findFirst = html.IndexOf(
-                setCookieCall,
-                StringComparison.InvariantCultureIgnoreCase) + setCookieCall.Length;
-            var last = html.IndexOf(");", findFirst, StringComparison.InvariantCulture);
-
-            var setCookieStatmentCall = html.Substring(findFirst, last - findFirst);
-            // take the parameters
-            var parameters = setCookieStatmentCall.Split(new[] { ',' });
-            for (int x = 0; x < parameters.Length; x++)
+            using (var ms = new MemoryStream())
             {
-                // cleanup
-                parameters[x] = parameters[x].Replace("'", "").Trim();
+                _stream.CopyTo(ms);
+                var html = Encoding.GetEncoding(encoding).GetString(ms.ToArray());
+
+                // find setCookie call
+                var findFirst = html.IndexOf(
+                    setCookieCall,
+                    StringComparison.InvariantCultureIgnoreCase) + setCookieCall.Length;
+                var last = html.IndexOf(");", findFirst, StringComparison.InvariantCulture);
+
+                var setCookieStatmentCall = html.Substring(findFirst, last - findFirst);
+                // take the parameters
+                var parameters = setCookieStatmentCall.Split(new[] { ',' });
+                for (int x = 0; x < parameters.Length; x++)
+                {
+                    // cleanup
+                    parameters[x] = parameters[x].Replace("'", "").Trim();
+                }
+                return parameters;
             }
-            return parameters;
         }
         #endregion
 
