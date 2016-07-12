@@ -82,7 +82,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.imgPictureBox = new System.Windows.Forms.PictureBox();
             this.filenameTextBox = new System.Windows.Forms.TextBox();
-            this.batchTimer = new System.Windows.Forms.Timer(this.components);
             this.infoToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.newBatchTimer = new System.Windows.Forms.Timer(this.components);
             this.parametersGroupBox.SuspendLayout();
@@ -669,11 +668,6 @@
             this.filenameTextBox.Size = new System.Drawing.Size(471, 20);
             this.filenameTextBox.TabIndex = 1;
             // 
-            // batchTimer
-            // 
-            this.batchTimer.Interval = 500;
-            this.batchTimer.Tick += new System.EventHandler(this.batchTimer_Tick);
-            // 
             // newBatchTimer
             // 
             this.newBatchTimer.Interval = 500;
@@ -771,7 +765,6 @@
         private System.Windows.Forms.Panel panel29;
         private System.Windows.Forms.Panel panel30;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Timer batchTimer;
         private System.Windows.Forms.TextBox filenameTextBox;
         private System.Windows.Forms.TrackBar speedTrackBar;
         private System.Windows.Forms.Label label4;
