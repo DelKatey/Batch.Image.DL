@@ -2,7 +2,7 @@
 
 Do you like "archiving" data? Especially ones that tends to be ordered sequentially numerically? And does those data tend to be images of a sort? Fret no more!
 
-![The program upon starting](\Screenshots\main.png)
+![The program upon starting](/Screenshots/main.png)
 
 ## Usage
 
