@@ -55,7 +55,6 @@
     <Compile Include="AboutWin.Designer.cs">
       <DependentUpon>AboutWin.cs</DependentUpon>
     </Compile>
-    <Compile Include="GetDomain.cs" />
     <Compile Include="MainWin.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -466,8 +466,8 @@ namespace Batch_Image_DL_Lite
                     }
                 }
                 catch
-                {
-                    MessageBox.Show("Image does not exist!");
+                {//Silent fail for in batch processes
+                    //MessageBox.Show("Image does not exist!");
                 }
                 Cursor.Current = Cursors.Default;
                 initialValue++;
