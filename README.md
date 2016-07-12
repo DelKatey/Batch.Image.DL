@@ -30,6 +30,8 @@ After getting the URL, feed it into the "Main URL" field, then provide the desir
 
 This was coded in C#, .NET Framework 4, with Visual Studio 2010. This repository contains the complete files that constitutes a working version of the program.
 
+Lack .NET Framework 4 (Not the client profile)? Download it [here](https://www.microsoft.com/en-us/download/details.aspx?id=17718)!
+
 ## License
 
 This project is licensed under the [GNU General Public License v3](LICENSE.md).
