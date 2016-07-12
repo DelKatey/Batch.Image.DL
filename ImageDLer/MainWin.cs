@@ -120,11 +120,11 @@ namespace Batch_Image_DL_Lite
         private void ToggleInterfaces()
         {
             siteGroupBox.Enabled = !siteGroupBox.Enabled;
+            previewButton.Enabled = !previewButton.Enabled;
+            dlButton.Enabled = !dlButton.Enabled;
 
             if ((!Batched && PreviewNotDownload) || (!Batched && !PreviewNotDownload))
             {
-                previewButton.Enabled = !previewButton.Enabled;
-                dlButton.Enabled = !dlButton.Enabled;
                 previewBatchButton.Enabled = !previewBatchButton.Enabled;
                 dlBatchButton.Enabled = !dlBatchButton.Enabled;
                 stopBatchPreviewButton.Enabled = false;
@@ -132,15 +132,11 @@ namespace Batch_Image_DL_Lite
             }
             else if (Batched && PreviewNotDownload)
             {
-                previewButton.Enabled = !previewButton.Enabled;
-                dlButton.Enabled = !dlButton.Enabled;
                 dlBatchButton.Enabled = !dlBatchButton.Enabled;
                 stopBatchPreviewButton.Enabled = !(previewBatchButton.Enabled = (previewBatchButton.Enabled ? false : true));
             }
             else if (Batched && !PreviewNotDownload)
             {
-                previewButton.Enabled = !previewButton.Enabled;
-                dlButton.Enabled = !dlButton.Enabled;
                 previewBatchButton.Enabled = !previewBatchButton.Enabled;
                 stopDlBatchButton.Enabled = !(dlBatchButton.Enabled = (dlBatchButton.Enabled ? false : true));
             }
