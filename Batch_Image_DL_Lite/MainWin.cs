@@ -174,7 +174,7 @@ namespace Batch_Image_DL_Lite
 
                 if (!batchCheck)
                 {
-                    string tempURL = UrlParser(urlTextBox.Text, extComboBox) + int.Parse(range1TextBox.Text) + (PrepExt(extComboBox.Text)); //string tempURL = urlTextBox.Text;
+                    string tempURL = UrlParser(urlTextBox.Text, extComboBox) + int.Parse(range1TextBox.Text) + (PrepExt(extComboBox.Text));
 
                     var cookies = new NameValueCollection();
 
@@ -229,7 +229,6 @@ namespace Batch_Image_DL_Lite
                                                         }
                                                         else
                                                         {
-                                                            //tempURL = UrlParser(urlTextBox.Text, extComboBox) + ((PrepValue(range1TextBox.Text)) + "_" + (PrepValue(int.Parse(range1TextBox.Text) + 1))) + (PrepExt(extComboBox.Text));
                                                             cookies = new NameValueCollection();
 
                                                             using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
@@ -427,7 +426,6 @@ namespace Batch_Image_DL_Lite
             ToggleInterfaces();
             parametersGroupBox.Enabled = false;
             ParseImageLinks(false);
-            //ProcessImages(false);
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -446,7 +444,6 @@ namespace Batch_Image_DL_Lite
             previewBatchButton.Enabled = false;
             stopBatchPreviewButton.Enabled = true;
             this.Cursor = Cursors.WaitCursor;
-            //ProcessImages(true);
             ParseImageLinks(true);
         }
 
@@ -503,7 +500,7 @@ namespace Batch_Image_DL_Lite
                     return;
                 }
             }
-            ParseImageLinks(false);//ProcessImages(false);
+            ParseImageLinks(false);
             parametersGroupBox.Enabled = true;
             ToggleInterfaces();
             this.Cursor = Cursors.Default;
@@ -533,7 +530,7 @@ namespace Batch_Image_DL_Lite
             dlBatchButton.Enabled = false;
             stopDlBatchButton.Enabled = true;
             this.Cursor = Cursors.WaitCursor;
-            ParseImageLinks(true);//ProcessImages(true);
+            ParseImageLinks(true);
         }
 
         private void stopDlBatchButton_Click(object sender, EventArgs e)
@@ -579,7 +576,7 @@ namespace Batch_Image_DL_Lite
         {
             if (initialValue < int.Parse(range2TextBox.Text) + 1)
             {
-                string tempURL = UrlParser(urlTextBox.Text, extComboBox) + initialValue + (PrepExt(extComboBox.Text)); //string tempURL = urlTextBox.Text;
+                string tempURL = UrlParser(urlTextBox.Text, extComboBox) + initialValue + (PrepExt(extComboBox.Text));
 
                 var cookies = new NameValueCollection();
 
@@ -634,7 +631,6 @@ namespace Batch_Image_DL_Lite
                                                     }
                                                     else
                                                     {
-                                                        //tempURL = UrlParser(urlTextBox.Text, extComboBox) + ((PrepValue(range1TextBox.Text)) + "_" + (PrepValue(int.Parse(range1TextBox.Text) + 1))) + (PrepExt(extComboBox.Text));
                                                         cookies = new NameValueCollection();
 
                                                         using (var response2 = Builder(tempURL, new Uri(tempURL).Host, cookies))
