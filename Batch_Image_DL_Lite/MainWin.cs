@@ -24,7 +24,8 @@ namespace Batch_Image_DL_Lite
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
         private string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
         private static bool MangaMode = true;
-        private int intStartPage = 0;
+        private int intStartPage = 0, intRanCount = 0;
+        //internal static readonly BatcherWin objBatch = new BatcherWin();
 
         public MainWin()
         {

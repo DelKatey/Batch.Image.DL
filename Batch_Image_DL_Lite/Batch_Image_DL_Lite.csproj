@@ -55,6 +55,12 @@
     <Compile Include="AboutWin.Designer.cs">
       <DependentUpon>AboutWin.cs</DependentUpon>
     </Compile>
+    <Compile Include="BatcherWin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BatcherWin.Designer.cs">
+      <DependentUpon>BatcherWin.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,6 +72,9 @@
     <Compile Include="Range.cs" />
     <EmbeddedResource Include="AboutWin.resx">
       <DependentUpon>AboutWin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BatcherWin.resx">
+      <DependentUpon>BatcherWin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWin.resx">
       <DependentUpon>MainWin.cs</DependentUpon>

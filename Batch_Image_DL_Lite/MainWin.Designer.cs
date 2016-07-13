@@ -61,6 +61,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.siteGroupBox = new System.Windows.Forms.GroupBox();
+            this.xkcdRadioButton = new System.Windows.Forms.RadioButton();
             this.mhRadioButton = new System.Windows.Forms.RadioButton();
             this.mfRadioButton = new System.Windows.Forms.RadioButton();
             this.panel27 = new System.Windows.Forms.Panel();
@@ -84,7 +85,6 @@
             this.filenameTextBox = new System.Windows.Forms.TextBox();
             this.infoToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.newBatchTimer = new System.Windows.Forms.Timer(this.components);
-            this.xkcdRadioButton = new System.Windows.Forms.RadioButton();
             this.parametersGroupBox.SuspendLayout();
             this.panel15.SuspendLayout();
             this.panel16.SuspendLayout();
@@ -200,6 +200,7 @@
             // extComboBox
             // 
             this.extComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.extComboBox.Enabled = false;
             this.extComboBox.FormattingEnabled = true;
             this.extComboBox.Items.AddRange(new object[] {
             ".jpg",
@@ -452,6 +453,17 @@
             this.siteGroupBox.TabStop = false;
             this.siteGroupBox.Text = "Site";
             // 
+            // xkcdRadioButton
+            // 
+            this.xkcdRadioButton.AutoSize = true;
+            this.xkcdRadioButton.Location = new System.Drawing.Point(7, 51);
+            this.xkcdRadioButton.Name = "xkcdRadioButton";
+            this.xkcdRadioButton.Size = new System.Drawing.Size(50, 17);
+            this.xkcdRadioButton.TabIndex = 2;
+            this.xkcdRadioButton.Text = "Xkcd";
+            this.xkcdRadioButton.UseVisualStyleBackColor = true;
+            this.xkcdRadioButton.CheckedChanged += new System.EventHandler(this.xkcdRadioButton_CheckedChanged);
+            // 
             // mhRadioButton
             // 
             this.mhRadioButton.AutoSize = true;
@@ -678,17 +690,6 @@
             // 
             this.newBatchTimer.Interval = 500;
             this.newBatchTimer.Tick += new System.EventHandler(this.newBatchTimer_Tick);
-            // 
-            // xkcdRadioButton
-            // 
-            this.xkcdRadioButton.AutoSize = true;
-            this.xkcdRadioButton.Location = new System.Drawing.Point(7, 51);
-            this.xkcdRadioButton.Name = "xkcdRadioButton";
-            this.xkcdRadioButton.Size = new System.Drawing.Size(50, 17);
-            this.xkcdRadioButton.TabIndex = 2;
-            this.xkcdRadioButton.Text = "Xkcd";
-            this.xkcdRadioButton.UseVisualStyleBackColor = true;
-            this.xkcdRadioButton.CheckedChanged += new System.EventHandler(this.xkcdRadioButton_CheckedChanged);
             // 
             // MainWin
             // 
