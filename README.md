@@ -6,7 +6,7 @@ Do you like "archiving" data? Especially ones that tends to be ordered sequentia
 
 ## Usage
 
-First, you need to get an URL that the program can work off of. Currently, the program is designed to work with two different types of URL that are very similar. They are:
+First, you need to get an URL that the program can work off of. Currently, the program is designed to work with three different types of URL that are very similar. They are:
 
 - MangaHere (example: http://www.mangahere.co/manga/koko_ni_iru_yo/v01/c001/43.html)
 - MangaFox (example: http://mangafox.me/manga/koko_ni_iru_yo/v01/c001/3.html)
