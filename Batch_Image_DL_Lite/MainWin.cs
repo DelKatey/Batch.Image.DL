@@ -17,15 +17,15 @@ namespace Batch_Image_DL_Lite
 {
     public partial class MainWin : Form
     {
-        Image imgStore;
-        internal readonly CookieContainer cookiecontainer = new CookieContainer();
+        internal static Image imgStore;
+        internal static readonly CookieContainer cookiecontainer = new CookieContainer();
         internal static string[] imgExt = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
         private int initialValue;
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
-        private string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
+        internal static string strDirectory = System.Environment.SpecialFolder.MyPictures.ToString();
         private static bool MangaMode = true;
-        private int intStartPage = 0, intRanCount = 0;
-        //internal static readonly BatcherWin objBatch = new BatcherWin();
+        private int intStartPage = 0;
+        internal static readonly BatchWin objBatch = new BatchWin();
 
         public MainWin()
         {
@@ -33,7 +33,7 @@ namespace Batch_Image_DL_Lite
         }
 
         #region Builder code //http://stackoverflow.com/a/24590419/3472690
-        private HttpWebResponse Builder(string url, string host, NameValueCollection cookies)
+        internal static HttpWebResponse Builder(string url, string host, NameValueCollection cookies)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = WebRequestMethods.Http.Get;
@@ -61,7 +61,7 @@ namespace Batch_Image_DL_Lite
             return (HttpWebResponse)request.GetResponse();
         }
 
-        private static string[] Parse(Stream _stream, string encoding)
+        internal static string[] Parse(Stream _stream, string encoding)
         {
             const string setCookieCall = "setCookie('";
 
@@ -91,32 +91,32 @@ namespace Batch_Image_DL_Lite
         #endregion
 
         #region Preparation Methods
-        private string PrepValue(int iValue)
+        internal static string PrepValue(int iValue)
         {
             return PrepValue(iValue.ToString());
         }
 
-        private string PrepValue(string sValue)
+        internal static string PrepValue(string sValue)
         {
             return (sValue.Length == 3) ? sValue : (new String('0', 3 - sValue.Length) + sValue);
         }
 
-        private string PrepValue(TextBox sTextBox)
+        internal static string PrepValue(TextBox sTextBox)
         {
             return PrepValue(sTextBox.Text);
         }
 
-        private string PrepExt(string sValue)
+        internal static string PrepExt(string sValue)
         {
             return sValue.Contains(".") ? sValue : "." + sValue;
         }
 
-        private string PrepExt(TextBox sTextBox)
+        internal static string PrepExt(TextBox sTextBox)
         {
             return PrepExt(sTextBox.Text);
         }
 
-        private string PrepExt(ComboBox sComboBox)
+        internal static string PrepExt(ComboBox sComboBox)
         {
             return PrepExt(sComboBox.Text);
         }
@@ -127,6 +127,7 @@ namespace Batch_Image_DL_Lite
             siteGroupBox.Enabled = !siteGroupBox.Enabled;
             previewButton.Enabled = !previewButton.Enabled;
             dlButton.Enabled = !dlButton.Enabled;
+            advButton.Enabled = !advButton.Enabled;
 
             if ((!Batched && PreviewNotDownload) || (!Batched && !PreviewNotDownload))
             {
@@ -186,7 +187,7 @@ namespace Batch_Image_DL_Lite
 
                 if (!batchCheck)
                 {
-                    string tempURL = UrlParser(urlTextBox.Text, extComboBox) + int.Parse(range1TextBox.Text) + (PrepExt(extComboBox.Text));
+                    string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + int.Parse(range1TextBox.Text) + (PrepExt(urlTextBox.Tag.ToString()));
 
                     var cookies = new NameValueCollection();
 
@@ -326,9 +327,9 @@ namespace Batch_Image_DL_Lite
         {
             if (!Batched)
             {
-                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox)))
+                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(range1TextBox)))
                 {
-                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : (IsEqualBlank(extComboBox) ? "extension " : "first page number ")) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : "first page number ") + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox)  || IsEqualBlank(range1TextBox)))
@@ -341,9 +342,9 @@ namespace Batch_Image_DL_Lite
             }
             else
             {
-                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(extComboBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox)))
+                if (!xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox)))
                 {
-                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : (IsEqualBlank(extComboBox) ? "extension " : (IsEqualBlank(range1TextBox) ? "first page number " : "last page number "))) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : (IsEqualBlank(range1TextBox) ? "first page number " : "last page number ")) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(range1TextBox) || IsEqualBlank(range2TextBox)))
@@ -429,7 +430,7 @@ namespace Batch_Image_DL_Lite
             return part1Url + part2Url;
         }
 
-        public List<Uri> FetchLinksFromSource(string htmlSource)
+        private List<Uri> FetchLinksFromSource(string htmlSource)
         {
             //http://stackoverflow.com/questions/138839/how-do-you-parse-an-html-string-for-image-tags-to-get-at-the-src-information
             List<Uri> links = new List<Uri>();
@@ -461,11 +462,11 @@ namespace Batch_Image_DL_Lite
             return links;
         }
 
-        private string UrlParser(string input, ComboBox inputCBox)
+        private string UrlParser(string input, TextBox oTextBox)//ComboBox inputCBox)
         {
             string otherresult = "";
             string result = UrlParser(input, out otherresult);
-            inputCBox.Text = otherresult;
+            oTextBox.Tag = otherresult;
             return result;
         }
 
@@ -476,7 +477,10 @@ namespace Batch_Image_DL_Lite
             Batched = !(PreviewNotDownload = true);
 
             if (CheckForBlanks() || CheckForInvalidity())
+            {
+                this.Cursor = Cursors.Default;
                 return;
+            }
 
             ToggleInterfaces();
             parametersGroupBox.Enabled = false;
@@ -502,7 +506,7 @@ namespace Batch_Image_DL_Lite
             ParseImageLinks(true);
         }
 
-        private ImageFormat DetectFormat(string fileName)
+        public static ImageFormat DetectFormat(string fileName)
         {
             return ((fileName.Contains(".jpg") || fileName.Contains(".jpeg")) ? ImageFormat.Jpeg : ((fileName.Contains(".png") ? ImageFormat.Png : ((fileName.Contains(".gif") ? ImageFormat.Gif : ImageFormat.Bmp)))));
         }
@@ -512,9 +516,14 @@ namespace Batch_Image_DL_Lite
             return DetectFormat(fTextBox.Text);
         }
 
-        private void SaveImage(Image iInput, string sFilename)
+        internal static void SaveImage(Image iInput, string sFilename)
         {
             iInput.Save((Uri.IsWellFormedUriString(strDirectory + sFilename, UriKind.Absolute)) ? strDirectory + sFilename : strDirectory + "\\" + sFilename, DetectFormat(sFilename));
+        }
+
+        internal static void SaveImage(Image iInput, string sFilename, string sDirectory)
+        {
+            iInput.Save((Uri.IsWellFormedUriString(sDirectory + sFilename, UriKind.Absolute)) ? sDirectory + sFilename : sDirectory + "\\" + sFilename, DetectFormat(sFilename));
         }
 
         private void SaveImage(Image iInput, TextBox sTextbox)
@@ -542,7 +551,10 @@ namespace Batch_Image_DL_Lite
             Batched = (PreviewNotDownload = false);
 
             if (CheckForBlanks() || CheckForInvalidity())
+            {
+                this.Cursor = Cursors.Default;
                 return;
+            }
 
             ToggleInterfaces();
             parametersGroupBox.Enabled = false;
@@ -637,7 +649,7 @@ namespace Batch_Image_DL_Lite
         {
             if (initialValue < int.Parse(range2TextBox.Text) + 1)
             {
-                string tempURL = UrlParser(urlTextBox.Text, extComboBox) + initialValue + (PrepExt(extComboBox.Text));
+                string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + initialValue + (PrepExt(urlTextBox.Tag.ToString()));
 
                 var cookies = new NameValueCollection();
 
@@ -759,24 +771,29 @@ namespace Batch_Image_DL_Lite
             }
         }
 
+        private void extComboBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void advButton_Click(object sender, EventArgs e)
+        {
+            objBatch.ShowDialog();
+        }
+
         private void mfRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            extComboBox.Text = ".jpg";
+            urlTextBox.Tag = ".jpg";
         }
 
         private void mhRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            extComboBox.Text = ".jpg";
+            urlTextBox.Tag = ".jpg";
         }
 
         private void xkcdRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            extComboBox.Text = "";
-        }
-
-        private void extComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
+            urlTextBox.Text = "";
         }
     }
 }

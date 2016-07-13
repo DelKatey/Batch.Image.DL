@@ -25,6 +25,7 @@ After getting the URL, feed it into the "Main URL" field, then provide the desir
 - 12 July 2016: Initial build version of 0.0.1.0. Able to parse and stream/download images (sequentially) from two different manga sites, albeit only part of the wide selection available due to parsing issues.
 - 13 July 2016: Reworked methods to enable wider compatability with the available selection of manga from the two sites, at the cost of processing speed.
 - 13 July 2016: Added xkcd support.
+- 14 July 2016: Added an advanced option to downloading images in batches. Now you can queue up "jobs", and leave it running while you go do something else!
  
 ## Installation
 

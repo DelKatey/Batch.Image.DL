@@ -35,11 +35,9 @@
             this.speedTrackBar = new System.Windows.Forms.TrackBar();
             this.panel17 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
+            this.panel24 = new System.Windows.Forms.Panel();
+            this.advButton = new System.Windows.Forms.Button();
             this.panel18 = new System.Windows.Forms.Panel();
-            this.panel29 = new System.Windows.Forms.Panel();
-            this.extComboBox = new System.Windows.Forms.ComboBox();
-            this.panel30 = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
             this.panel31 = new System.Windows.Forms.Panel();
             this.aboutButton = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -90,8 +88,7 @@
             this.panel16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackBar)).BeginInit();
             this.panel17.SuspendLayout();
-            this.panel29.SuspendLayout();
-            this.panel30.SuspendLayout();
+            this.panel24.SuspendLayout();
             this.panel31.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -127,8 +124,8 @@
             // panel15
             // 
             this.panel15.Controls.Add(this.panel16);
+            this.panel15.Controls.Add(this.panel24);
             this.panel15.Controls.Add(this.panel18);
-            this.panel15.Controls.Add(this.panel29);
             this.panel15.Controls.Add(this.panel31);
             this.panel15.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel15.Location = new System.Drawing.Point(3, 53);
@@ -144,7 +141,7 @@
             this.panel16.Location = new System.Drawing.Point(10, 0);
             this.panel16.Name = "panel16";
             this.panel16.Padding = new System.Windows.Forms.Padding(0, 5, 5, 5);
-            this.panel16.Size = new System.Drawing.Size(274, 34);
+            this.panel16.Size = new System.Drawing.Size(310, 34);
             this.panel16.TabIndex = 8;
             // 
             // speedTrackBar
@@ -153,7 +150,7 @@
             this.speedTrackBar.Location = new System.Drawing.Point(71, 5);
             this.speedTrackBar.Maximum = 15;
             this.speedTrackBar.Name = "speedTrackBar";
-            this.speedTrackBar.Size = new System.Drawing.Size(198, 24);
+            this.speedTrackBar.Size = new System.Drawing.Size(234, 24);
             this.speedTrackBar.TabIndex = 1;
             this.speedTrackBar.Value = 3;
             this.speedTrackBar.Scroll += new System.EventHandler(this.speedTrackBar_Scroll);
@@ -178,6 +175,27 @@
             this.label4.Text = "Speed (ms):";
             this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // panel24
+            // 
+            this.panel24.Controls.Add(this.advButton);
+            this.panel24.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel24.Location = new System.Drawing.Point(320, 0);
+            this.panel24.Name = "panel24";
+            this.panel24.Padding = new System.Windows.Forms.Padding(5, 3, 5, 5);
+            this.panel24.Size = new System.Drawing.Size(88, 34);
+            this.panel24.TabIndex = 12;
+            // 
+            // advButton
+            // 
+            this.advButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.advButton.Location = new System.Drawing.Point(5, 3);
+            this.advButton.Name = "advButton";
+            this.advButton.Size = new System.Drawing.Size(78, 26);
+            this.advButton.TabIndex = 0;
+            this.advButton.Text = "Advanced";
+            this.advButton.UseVisualStyleBackColor = true;
+            this.advButton.Click += new System.EventHandler(this.advButton_Click);
+            // 
             // panel18
             // 
             this.panel18.Dock = System.Windows.Forms.DockStyle.Left;
@@ -185,55 +203,6 @@
             this.panel18.Name = "panel18";
             this.panel18.Size = new System.Drawing.Size(10, 34);
             this.panel18.TabIndex = 7;
-            // 
-            // panel29
-            // 
-            this.panel29.Controls.Add(this.extComboBox);
-            this.panel29.Controls.Add(this.panel30);
-            this.panel29.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel29.Location = new System.Drawing.Point(284, 0);
-            this.panel29.Name = "panel29";
-            this.panel29.Padding = new System.Windows.Forms.Padding(0, 5, 5, 5);
-            this.panel29.Size = new System.Drawing.Size(124, 34);
-            this.panel29.TabIndex = 10;
-            // 
-            // extComboBox
-            // 
-            this.extComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.extComboBox.Enabled = false;
-            this.extComboBox.FormattingEnabled = true;
-            this.extComboBox.Items.AddRange(new object[] {
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".bmp",
-            ".gif"});
-            this.extComboBox.Location = new System.Drawing.Point(64, 5);
-            this.extComboBox.Name = "extComboBox";
-            this.extComboBox.Size = new System.Drawing.Size(55, 21);
-            this.extComboBox.TabIndex = 1;
-            this.extComboBox.Text = ".jpg";
-            this.extComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.extComboBox_KeyPress);
-            // 
-            // panel30
-            // 
-            this.panel30.Controls.Add(this.label5);
-            this.panel30.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel30.Location = new System.Drawing.Point(0, 5);
-            this.panel30.Name = "panel30";
-            this.panel30.Padding = new System.Windows.Forms.Padding(0, 3, 7, 3);
-            this.panel30.Size = new System.Drawing.Size(64, 24);
-            this.panel30.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(0, 3);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(57, 18);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Extension:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // panel31
             // 
@@ -709,8 +678,7 @@
             this.panel16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackBar)).EndInit();
             this.panel17.ResumeLayout(false);
-            this.panel29.ResumeLayout(false);
-            this.panel30.ResumeLayout(false);
+            this.panel24.ResumeLayout(false);
             this.panel31.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
@@ -780,15 +748,11 @@
         private System.Windows.Forms.Panel panel21;
         private System.Windows.Forms.Button previewButton;
         private System.Windows.Forms.Panel panel19;
-        private System.Windows.Forms.Panel panel29;
-        private System.Windows.Forms.Panel panel30;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox filenameTextBox;
         private System.Windows.Forms.TrackBar speedTrackBar;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ToolTip infoToolTip;
         private System.Windows.Forms.Panel panel31;
-        private System.Windows.Forms.ComboBox extComboBox;
         private System.Windows.Forms.GroupBox siteGroupBox;
         private System.Windows.Forms.RadioButton mhRadioButton;
         private System.Windows.Forms.RadioButton mfRadioButton;
@@ -796,6 +760,8 @@
         private System.Windows.Forms.Button aboutButton;
         private System.Windows.Forms.Timer newBatchTimer;
         private System.Windows.Forms.RadioButton xkcdRadioButton;
+        private System.Windows.Forms.Panel panel24;
+        private System.Windows.Forms.Button advButton;
     }
 }
 
