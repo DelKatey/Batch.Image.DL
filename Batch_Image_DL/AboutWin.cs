@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Batch_Image_DL_Lite
+namespace Batch_Image_DL
 {
     public partial class AboutWin : Form
     {

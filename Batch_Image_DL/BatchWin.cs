@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Downloading;
 
-namespace Batch_Image_DL_Lite
+namespace Batch_Image_DL
 {
     public partial class BatchWin : Form
     {

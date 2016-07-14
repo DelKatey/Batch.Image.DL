@@ -8,8 +8,8 @@
     <ProjectGuid>{039BF24D-8ECA-4BFE-B072-F94742C21408}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Batch_Image_DL_Lite</RootNamespace>
-    <AssemblyName>Batch_Image_DL_Lite</AssemblyName>
+    <RootNamespace>Batch_Image_DL</RootNamespace>
+    <AssemblyName>Batch_Image_DL</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>

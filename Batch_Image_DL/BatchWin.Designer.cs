@@ -1,4 +1,4 @@
-﻿namespace Batch_Image_DL_Lite
+﻿namespace Batch_Image_DL
 {
     partial class BatchWin
     {

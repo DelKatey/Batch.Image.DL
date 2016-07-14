@@ -1,4 +1,4 @@
-﻿namespace Batch_Image_DL_Lite
+﻿namespace Batch_Image_DL
 {
     partial class AboutWin
     {
@@ -64,7 +64,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 2;
-            this.label3.Text = "Version: 0.1a";
+            this.label3.Text = "Version: 0.5a";
             // 
             // textBox1
             // 

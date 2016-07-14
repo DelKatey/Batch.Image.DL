@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using System.Downloading;
 using Ookii.Dialogs;
 
-namespace Batch_Image_DL_Lite
+namespace Batch_Image_DL
 {
     public partial class MainWin : Form
     {
@@ -421,7 +421,7 @@ namespace Batch_Image_DL_Lite
 
         private void newBatchTimer_Tick(object sender, EventArgs e)
         {
-            if (initialValue < int.Parse(range2TextBox.Text) + 1)
+            if (initialValue <= int.Parse(range2TextBox.Text))
             {
                 string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + initialValue + (PrepExt(urlTextBox.Tag.ToString()));
 

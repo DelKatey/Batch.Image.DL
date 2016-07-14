@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Batch_Image_DL_Lite
+namespace Batch_Image_DL
 {
     static class Program
     {
