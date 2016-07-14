@@ -324,6 +324,7 @@ namespace System.Downloading
         //This class is based on WhiteXZ's Downloader.cs code: https://gist.github.com/WhiteXZ/1e5c19ccf3f69e68744de21a805f3bf4
         private string _url, _dest = System.Environment.SpecialFolder.MyPictures.ToString() + "\\Batch Downloaded\\", _filename = "error.404";
         private Saving _save = Saving.No;
+        private Previewing _preview = Previewing.No;
         private Image _img = null;
         private BackgroundWorker worker;
         private int _min = 1, _max = 1;
@@ -381,6 +382,12 @@ namespace System.Downloading
             No = 0x000
         }
 
+        public enum Previewing
+        {
+            Yes = 0x001,
+            No = 0x000
+        }
+
         public Saving SaveToFile
         {
             get { return _save; }
@@ -392,11 +399,109 @@ namespace System.Downloading
             }
         }
 
+        public Previewing PreviewImage
+        {
+            get { return _preview; }
+            set { _preview = value; }
+        }
+
+        public void Start(string url)
+        {
+            _url = url;
+            _min = 1;
+            _max = 0;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(int page)
+        {
+            _min = page;
+            _max = 0;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(int page, Previewing preview)
+        {
+            _min = page;
+            _max = 0;
+            _preview = preview;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(int page, Saving save, string destination)
+        {
+            _min = page;
+            _max = 0;
+            _save = save;
+            if (save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(int page, Previewing preview, Saving save, string destination)
+        {
+            _min = page;
+            _max = 0;
+            _preview = preview;
+            _save = save;
+            if (save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker.RunWorkerAsync();
+        }
+
         public void Start(string url, int page)
         {
             _url = url;
             _min = page;
             _max = 0;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int page, Previewing preview)
+        {
+            _url = url;
+            _min = page;
+            _max = 0;
+            _preview = preview;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int page, Saving save, string destination)
+        {
+            _url = url;
+            _min = page;
+            _max = 0;
+            _save = save;
+            if (save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int page, Previewing preview, Saving save, string destination)
+        {
+            _url = url;
+            _min = page;
+            _max = 0;
+            _preview = preview;
+            _save = save;
+            if (save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
 
             worker.RunWorkerAsync();
         }
@@ -410,6 +515,47 @@ namespace System.Downloading
             worker.RunWorkerAsync();
         }
 
+        public void Start(string url, int start_page, int end_page, Previewing preview)
+        {
+            _url = url;
+            _min = start_page;
+            _max = end_page;
+            _preview = preview;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int start_page, int end_page, Saving save, string destination)
+        {
+            _url = url;
+            _min = start_page;
+            _max = end_page;
+            _save = save;
+
+            if (_save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int start_page, int end_page, Previewing preview, Saving save, string destination)
+        {
+            _url = url;
+            _min = start_page;
+            _max = end_page;
+            _save = save;
+            _preview = preview;
+
+            if (_save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker.RunWorkerAsync();
+        }
+
         public void Cancel()
         {
             worker.CancelAsync();
@@ -417,7 +563,14 @@ namespace System.Downloading
 
         private void Worker_StopSlacking(object sender, DoWorkEventArgs e)
         {
+            if (_max == 0) // Only one page will be processed
+            {
+                
+            }
+            else // A range of pages will be processed
+            {
 
+            }
         }
 
         private void Worker_InformMe(object sender, ProgressChangedEventArgs e)
