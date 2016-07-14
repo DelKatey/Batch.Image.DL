@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Downloader;
+using System.Downloading;
 using Ookii.Dialogs;
 
 namespace Batch_Image_DL_Lite
@@ -132,11 +132,15 @@ namespace Batch_Image_DL_Lite
                 {
                     string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + int.Parse(range1TextBox.Text) + (PrepExt(urlTextBox.Tag.ToString()));
                     Image tempImage;
+                    string filename;
 
-                    if (Downloader.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage))
+                    if (Downloading.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage, out filename))
                     {
-                        if (tempImage != null)
+                        if (tempImage != null && !String.IsNullOrWhiteSpace(filename))
+                        {
                             imgPictureBox.Image = tempImage;
+                            filenameTextBox.Text = filename;
+                        }
                     }
                     else
                     {
@@ -212,7 +216,7 @@ namespace Batch_Image_DL_Lite
         {
             if (!Batched)
             {
-                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloader.TryParse(range1TextBox.Text))
+                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloading.TryParse(range1TextBox.Text))
                 {
                     MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : "first page number field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
@@ -222,9 +226,9 @@ namespace Batch_Image_DL_Lite
             }
             else
             {
-                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloader.TryParse(range1TextBox.Text) || !Downloader.TryParse(range2TextBox.Text))
+                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloading.TryParse(range1TextBox.Text) || !Downloading.TryParse(range2TextBox.Text))
                 {
-                    MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : (!Downloader.TryParse(range1TextBox.Text) ? "first page number" : "last page number") + " field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : (!Downloading.TryParse(range1TextBox.Text) ? "first page number" : "last page number") + " field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else
@@ -235,7 +239,7 @@ namespace Batch_Image_DL_Lite
         private string UrlParser(string input, TextBox oTextBox)//ComboBox inputCBox)
         {
             string otherresult = "";
-            string result = Downloader.UrlParser(input, out otherresult);
+            string result = Downloading.UrlParser(input, out otherresult);
             oTextBox.Tag = otherresult;
             return result;
         }
@@ -422,11 +426,15 @@ namespace Batch_Image_DL_Lite
                 string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + initialValue + (PrepExt(urlTextBox.Tag.ToString()));
 
                 Image tempImage;
+                string filename;
 
-                if (Downloader.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage))
+                if (Downloading.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage, out filename))
                 {
-                    if (tempImage != null)
+                    if (tempImage != null && !String.IsNullOrWhiteSpace(filename))
+                    {
                         imgPictureBox.Image = tempImage;
+                        filenameTextBox.Text = filename;
+                    }
                 }
                 else
                 {
