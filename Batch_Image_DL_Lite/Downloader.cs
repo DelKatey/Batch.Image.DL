@@ -191,7 +191,7 @@ namespace System.Downloading
 
         internal static bool AttemptDownload(string url, string destination, bool save, out Image img, out string filename)
         {
-            bool KyugenNyugenThisIsReturnedIfAllElseFailsForSomeUnknownReasonOrArtixKriegerJWittzButHopefullyEverythingWontGoToHellOverItButWhoKnowsPepepepepepepepepepepeLastFailsafe = false;
+            bool KyugenNyugenThisIsReturnedIfAllElseFailsForSomeUnknownReasonArtixKriegerJWittzButHopefullyEverythingWontGoToHellOverItButWhoKnowsPepepepepepepepepepepeLastFailsafe = false;
             NameValueCollection cookies = new NameValueCollection();
             img = null;
             filename = null;
@@ -298,7 +298,7 @@ namespace System.Downloading
             }
             catch { return false; }
 
-            return KyugenNyugenThisIsReturnedIfAllElseFailsForSomeUnknownReasonOrArtixKriegerJWittzButHopefullyEverythingWontGoToHellOverItButWhoKnowsPepepepepepepepepepepeLastFailsafe;
+            return KyugenNyugenThisIsReturnedIfAllElseFailsForSomeUnknownReasonArtixKriegerJWittzButHopefullyEverythingWontGoToHellOverItButWhoKnowsPepepepepepepepepepepeLastFailsafe;
         }
     }
 
