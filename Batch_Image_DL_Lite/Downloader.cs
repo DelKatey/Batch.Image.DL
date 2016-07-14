@@ -211,6 +211,7 @@ namespace System.Downloading
 
                         if (links.Count == 0)
                         {
+                            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "no links");
                             return false;
                         }
                         else
@@ -244,7 +245,10 @@ namespace System.Downloading
                                                             return true;
                                                         }
                                                         catch
-                                                        { return false; }
+                                                        {
+                                                            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "1ws2f4swr01");
+                                                            return false;
+                                                        }
                                                     }
                                                     break;
                                                 }
@@ -275,7 +279,10 @@ namespace System.Downloading
                                                                             return true;
                                                                         }
                                                                         catch
-                                                                        { return false; }
+                                                                        {
+                                                                            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "2ws2f4swr02");
+                                                                            return false;
+                                                                        }
                                                                     }
                                                                     else
                                                                         return true;
@@ -291,13 +298,21 @@ namespace System.Downloading
                                 }
                             }
                             catch
-                            { return false; }
+                            {
+                                System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "3nrrfsrorwg202");
+                                return false;
+                            }
                         }
                     }
                 }
             }
-            catch { return false; }
+            catch 
+            {
+                System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "4ftnlnrnrnaa04");
+                return false; 
+            }
 
+            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "default error");
             return KyugenNyugenThisIsReturnedIfAllElseFailsForSomeUnknownReasonArtixKriegerJWittzButHopefullyEverythingWontGoToHellOverItButWhoKnowsPepepepepepepepepepepeLastFailsafe;
         }
     }
