@@ -28,6 +28,7 @@ After getting the URL, feed it into the "Main URL" field, then provide the desir
 - 14 July 2016: Added an advanced option to downloading images in batches. Now you can queue up "jobs", and leave it running while you go do something else!
 - 14 July 2016: Migrated most of the downloading code to a new class.
 - 15 July 2016: Resolved a very minor bug that caused part of the program to simply fail. Adapted @WhiteXZ's [Downloader.cs](https://gist.github.com/WhiteXZ/1e5c19ccf3f69e68744de21a805f3bf4) into the program.
+- 15 July 2016: Split into new branch, in light of a potential rework.
  
 ## Installation
 
