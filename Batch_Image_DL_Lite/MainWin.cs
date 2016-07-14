@@ -32,7 +32,7 @@ namespace Batch_Image_DL_Lite
             InitializeComponent();
         }
 
-        
+
 
         #region Preparation Methods
         internal static string PrepValue(int iValue)
@@ -204,7 +204,7 @@ namespace Batch_Image_DL_Lite
                                                                         {
                                                                             imgPictureBox.Image = imgStore;
                                                                             filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                                                
+
                                                                             if (SaveFile)
                                                                             {
                                                                                 try
@@ -225,7 +225,7 @@ namespace Batch_Image_DL_Lite
                                     }
                                     catch
                                     {
-                                        
+
                                         MessageBox.Show("Image does not exist!");
                                         return false;
                                     }
@@ -233,8 +233,8 @@ namespace Batch_Image_DL_Lite
                             }
                         }
                     }
-                    catch 
-                    { 
+                    catch
+                    {
                         if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
                             filenameTextBox.Text = "ERROR 404!";
                     }
@@ -254,7 +254,7 @@ namespace Batch_Image_DL_Lite
                 return false;
             }
         }
-       
+
         #region Methods for Laziness
         private bool IsEqualBlank(TextBox sTextBox)
         {
@@ -276,7 +276,7 @@ namespace Batch_Image_DL_Lite
                     MessageBox.Show("The " + ((IsEqualBlank(urlTextBox)) ? "URL " : "first page number ") + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
-                else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox)  || IsEqualBlank(range1TextBox)))
+                else if (xkcdRadioButton.Checked && (IsEqualBlank(urlTextBox) || IsEqualBlank(range1TextBox)))
                 {
                     MessageBox.Show("The " + ((IsEqualBlank(urlTextBox) ? "URL " : "first page number ")) + "field must be filled!", "Missing Parameters!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
@@ -605,14 +605,14 @@ namespace Batch_Image_DL_Lite
                                 }
                                 catch
                                 {
-                                   MessageBox.Show("Image does not exist!");
+                                    MessageBox.Show("Image does not exist!");
                                 }
                             }
                         }
                     }
                 }
-                catch 
-                { 
+                catch
+                {
                     /* Silent Failure */
                     if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
                         filenameTextBox.Text = "ERROR 404!";
