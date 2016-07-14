@@ -250,7 +250,9 @@ namespace System.Downloading
                                                             return false;
                                                         }
                                                     }
-                                                    break;
+                                                    else
+                                                        return true;
+                                                    //break;
                                                 }
                                                 else
                                                 {
@@ -306,10 +308,10 @@ namespace System.Downloading
                     }
                 }
             }
-            catch 
+            catch
             {
                 System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "4ftnlnrnrnaa04");
-                return false; 
+                return false;
             }
 
             System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "default error");

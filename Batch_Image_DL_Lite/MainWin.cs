@@ -18,7 +18,6 @@ namespace Batch_Image_DL_Lite
 {
     public partial class MainWin : Form
     {
-        internal static Image imgStore;
         internal static string[] imgExt = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
         private int initialValue;
         private bool SaveFile = false, Batched = false, PreviewNotDownload = true;
@@ -132,111 +131,23 @@ namespace Batch_Image_DL_Lite
                 if (!batchCheck)
                 {
                     string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + int.Parse(range1TextBox.Text) + (PrepExt(urlTextBox.Tag.ToString()));
+                    Image tempImage;
+                    string filename;
 
-                    var cookies = new NameValueCollection();
-
-                    try
+                    if (Downloading.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage, out filename))
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
-                        request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                        request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                        if (response.StatusCode == HttpStatusCode.OK)
+                        if (tempImage != null && !String.IsNullOrWhiteSpace(filename))
                         {
-                            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                            {
-                                List<Uri> links = Downloading.FetchLinksFromSource(sr.ReadToEnd());
-
-                                if (links.Count == 0)
-                                    return false;
-                                else
-                                {
-                                    tempURL = links[0].ToString().Replace("file://", "http://");
-
-                                    try
-                                    {
-                                        for (int tries = 0; tries < 2; tries++)
-                                        {
-                                            using (response = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                            {
-                                                using (var stream = response.GetResponseStream())
-                                                {
-                                                    string contentType = response.ContentType.ToLowerInvariant();
-                                                    if (contentType.StartsWith("text/html"))
-                                                    {
-                                                        var parameters = Downloading.Parse(stream, response.CharacterSet);
-                                                        cookies.Add(parameters[0], parameters[1]);
-                                                    }
-                                                    if (contentType.StartsWith("image"))
-                                                    {
-                                                        imgStore = Image.FromStream(stream);
-                                                        if (imgStore.Width > 10 && imgStore.Height > 10)
-                                                        {
-                                                            imgPictureBox.Image = imgStore;
-                                                            filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                            if (SaveFile)
-                                                            {
-                                                                try
-                                                                { SaveImage(imgStore, filenameTextBox); }
-                                                                catch
-                                                                { }
-                                                            }
-                                                            break;
-                                                        }
-                                                        else
-                                                        {
-                                                            cookies = new NameValueCollection();
-
-                                                            using (var response2 = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                                            {
-                                                                using (var stream2 = response2.GetResponseStream())
-                                                                {
-                                                                    if (contentType.StartsWith("text/html"))
-                                                                    {
-                                                                        var parameters = Downloading.Parse(stream2, response2.CharacterSet);
-                                                                        cookies.Add(parameters[0], parameters[1]);
-                                                                    }
-                                                                    if (contentType.StartsWith("image"))
-                                                                    {
-                                                                        imgStore = Image.FromStream(stream2);
-                                                                        if (imgStore.Width > 10 && imgStore.Height > 10)
-                                                                        {
-                                                                            imgPictureBox.Image = imgStore;
-                                                                            filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-
-                                                                            if (SaveFile)
-                                                                            {
-                                                                                try
-                                                                                { SaveImage(imgStore, filenameTextBox); }
-                                                                                catch
-                                                                                { }
-                                                                            }
-                                                                        }
-                                                                        break;
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    catch
-                                    {
-
-                                        MessageBox.Show("Image does not exist!");
-                                        return false;
-                                    }
-                                }
-                            }
+                            imgPictureBox.Image = tempImage;
+                            filenameTextBox.Text = filename;
                         }
                     }
-                    catch
+                    else
                     {
                         if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
                             filenameTextBox.Text = "ERROR 404!";
+                        else
+                            MessageBox.Show("Image does not exist!");
                     }
                 }
                 else
@@ -514,108 +425,23 @@ namespace Batch_Image_DL_Lite
             {
                 string tempURL = UrlParser(urlTextBox.Text, urlTextBox) + initialValue + (PrepExt(urlTextBox.Tag.ToString()));
 
-                var cookies = new NameValueCollection();
+                Image tempImage;
+                string filename;
 
-                try
+                if (Downloading.AttemptDownload(tempURL, strDirectory, SaveFile, out tempImage, out filename))
                 {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
-                    request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                    if (response.StatusCode == HttpStatusCode.OK)
+                    if (tempImage != null && !String.IsNullOrWhiteSpace(filename))
                     {
-                        using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                        {
-                            List<Uri> links = Downloading.FetchLinksFromSource(sr.ReadToEnd());
-
-                            if (links.Count == 0)
-                                return;
-                            else
-                            {
-                                tempURL = links[0].ToString().Replace("file://", "http://");
-
-                                try
-                                {
-                                    for (int tries = 0; tries < 2; tries++)
-                                    {
-                                        using (response = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                        {
-                                            using (var stream = response.GetResponseStream())
-                                            {
-                                                string contentType = response.ContentType.ToLowerInvariant();
-                                                if (contentType.StartsWith("text/html"))
-                                                {
-                                                    var parameters = Downloading.Parse(stream, response.CharacterSet);
-                                                    cookies.Add(parameters[0], parameters[1]);
-                                                }
-                                                if (contentType.StartsWith("image"))
-                                                {
-                                                    imgStore = Image.FromStream(stream);
-                                                    if (imgStore.Width > 10 && imgStore.Height > 10)
-                                                    {
-                                                        imgPictureBox.Image = imgStore;
-                                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                        if (SaveFile)
-                                                        {
-                                                            try
-                                                            { SaveImage(imgStore, filenameTextBox); }
-                                                            catch
-                                                            { }
-                                                        }
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        cookies = new NameValueCollection();
-
-                                                        using (var response2 = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                                        {
-                                                            using (var stream2 = response2.GetResponseStream())
-                                                            {
-                                                                if (contentType.StartsWith("text/html"))
-                                                                {
-                                                                    var parameters = Downloading.Parse(stream2, response2.CharacterSet);
-                                                                    cookies.Add(parameters[0], parameters[1]);
-                                                                }
-                                                                if (contentType.StartsWith("image"))
-                                                                {
-                                                                    imgStore = Image.FromStream(stream2);
-                                                                    if (imgStore.Width > 10 && imgStore.Height > 10)
-                                                                    {
-                                                                        imgPictureBox.Image = imgStore;
-                                                                        filenameTextBox.Text = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                                        if (SaveFile)
-                                                                        {
-                                                                            try
-                                                                            { SaveImage(imgStore, filenameTextBox); }
-                                                                            catch
-                                                                            { }
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch
-                                {
-                                    MessageBox.Show("Image does not exist!");
-                                }
-                            }
-                        }
+                        imgPictureBox.Image = tempImage;
+                        filenameTextBox.Text = filename;
                     }
                 }
-                catch
+                else
                 {
-                    /* Silent Failure */
                     if (xkcdRadioButton.Checked && int.Parse(range1TextBox.Text) == 404)
                         filenameTextBox.Text = "ERROR 404!";
+                    else
+                        MessageBox.Show("Image does not exist!");
                 }
 
                 //Cursor.Current = Cursors.Default;
