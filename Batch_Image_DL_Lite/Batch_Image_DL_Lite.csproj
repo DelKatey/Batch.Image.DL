@@ -55,6 +55,7 @@
     <Compile Include="AboutWin.Designer.cs">
       <DependentUpon>AboutWin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Downloader.cs" />
     <Compile Include="BatchWin.cs">
       <SubType>Form</SubType>
     </Compile>

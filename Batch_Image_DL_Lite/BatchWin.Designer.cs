@@ -83,6 +83,7 @@
             this.batchStatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.actionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.downloadBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.detailsGroupBox.SuspendLayout();
             this.panel23.SuspendLayout();
@@ -649,6 +650,10 @@
             this.actionToolStripStatusLabel.Size = new System.Drawing.Size(70, 17);
             this.actionToolStripStatusLabel.Text = "generic_text";
             // 
+            // downloadBackgroundWorker
+            // 
+            this.downloadBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.downloadBackgroundWorker_DoWork);
+            // 
             // BatchWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -755,6 +760,7 @@
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel statusToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel actionToolStripStatusLabel;
+        private System.ComponentModel.BackgroundWorker downloadBackgroundWorker;
 
     }
 }

@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Downloader;
 
 namespace Batch_Image_DL_Lite
 {
@@ -19,8 +20,6 @@ namespace Batch_Image_DL_Lite
         private static int SelectedIndex = 0, initialValue = 0, BatchStart = 1, BatchEnd = 1, TotalPages = 0;
         private static string BatchUrl = "", BatchDest = "";
         private bool Processing = false;
-
-        private bool blnDebug = false;
 
         public BatchWin()
         {
@@ -240,7 +239,7 @@ namespace Batch_Image_DL_Lite
 
                     foreach (ListViewItem lvi in entriesListView.Items)
                     {
-                        if (!String.IsNullOrWhiteSpace(lvi.SubItems[2].Text) && MainWin.TryParse(lvi.SubItems[2].Text))
+                        if (!String.IsNullOrWhiteSpace(lvi.SubItems[2].Text) && Downloader.TryParse(lvi.SubItems[2].Text))
                         {
                             TotalPages += ((int.Parse(lvi.SubItems[2].Text) - int.Parse(lvi.SubItems[1].Text)) + 1);
                         }
@@ -274,87 +273,12 @@ namespace Batch_Image_DL_Lite
             }
         }
 
-        internal string UrlParser(string input, out string sExt)
-        {
-
-            string part1Url = (!(input.Contains("xkcd") && !input.Contains("wiki") && !input.Contains("explain"))) ? input.Substring(0, input.LastIndexOf('/') + 1) : "http://xkcd.com/";
-            string part2Url = (!(input.Contains("xkcd") && !input.Contains("wiki") && !input.Contains("explain"))) ? input.Substring(input.LastIndexOf('/') + 1) : String.Empty;
-
-            if (input.Contains("mangafox"))
-            { /* For future possible additions */ }
-            else if (input.Contains("mangahere"))
-            {
-                try
-                { part2Url = part2Url.Substring(0, part2Url.LastIndexOf('?')); }
-                catch { /* Silent Failure Here */ }
-            }
-            else if (input.Contains("xkcd") && !input.Contains("wiki") && !input.Contains("explain"))
-            { /* For future possible additions */ }
-
-            if (input.Contains("mangahere"))
-            {
-                try
-                { sExt = part2Url.Substring(part2Url.LastIndexOf('.'), part2Url.LastIndexOf('?')); }
-                catch
-                {
-                    try
-                    { sExt = part2Url.Substring(part2Url.LastIndexOf('.')); }
-                    catch
-                    { sExt = ".html"; }
-                }
-            }
-            else if (input.Contains("xkcd") && !input.Contains("wiki") && !input.Contains("explain"))
-                sExt = "";
-            else
-                sExt = part2Url.Substring(part2Url.LastIndexOf('.'));
-
-            //http://stackoverflow.com/a/3732864/3472690
-            try
-            { part2Url = part2Url.Substring(0, part2Url.IndexOfAny("0123456789".ToCharArray())); }
-            catch
-            { part2Url = ""; }
-
-            return part1Url + part2Url;
-        }
-
         private string UrlParser(string input, TextBox oTextBox)//ComboBox inputCBox)
         {
             string otherresult = "";
-            string result = UrlParser(input, out otherresult);
+            string result = Downloader.UrlParser(input, out otherresult);
             oTextBox.Tag = otherresult;
             return result;
-        }
-
-        private List<Uri> FetchLinksFromSource(string htmlSource)
-        {
-            //http://stackoverflow.com/questions/138839/how-do-you-parse-an-html-string-for-image-tags-to-get-at-the-src-information
-            List<Uri> links = new List<Uri>();
-            string regexImgSrc = "src=[\"'](.+?)[\"'].*?>";
-            MatchCollection matchesImgSrc = Regex.Matches(htmlSource, regexImgSrc, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            foreach (Match m in matchesImgSrc)
-            {
-                string href = m.Groups[1].Value;
-                foreach (string x in new string[] { ".jpg", ".jpeg", ".png" })
-                {
-                    if (href.Contains(x))
-                    {//http://stackoverflow.com/questions/2912476/using-c-sharp-to-check-if-string-contains-a-string-in-string-array
-                        if ((href.Contains("z.mfcdn.net/store")) || (href.Contains("a.mhcdn.net/store")))
-                        {
-                            if (href.Contains("compressed"))
-                            {
-                                links.Add(new Uri(href.Substring(0, href.LastIndexOf(x) + x.Length)));
-                                break;
-                            }
-                        }
-                        else if (href.Contains("xkcd") && href.Contains("comics"))
-                        {
-                            links.Add(new Uri(href.Substring(0, href.LastIndexOf(x) + x.Length)));
-                            break;
-                        }
-                    }
-                }
-            }
-            return links;
         }
 
         private void PathBrancher(string url, string start, string end, string directory)
@@ -365,7 +289,7 @@ namespace Batch_Image_DL_Lite
                 string tag = "";
                 Processing = true;
 
-                if (!String.IsNullOrWhiteSpace(end) && MainWin.TryParse(end))
+                if (!String.IsNullOrWhiteSpace(end) && Downloader.TryParse(end))
                 {
                     BatchUrl = url;
                     BatchDest = directory;
@@ -385,134 +309,15 @@ namespace Batch_Image_DL_Lite
                         return;
                     }
 
-                    string tempURL = UrlParser(url, out tag) + int.Parse(start) + (MainWin.PrepExt(tag));
+                    string tempURL = Downloader.UrlParser(url, out tag) + int.Parse(start) + (Downloader.PrepExt(tag));
 
-                    var cookies = new NameValueCollection();
-
-                    try
+                    if (Downloader.AttemptDownload(tempURL, directory, true))
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
-                        request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                        request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                        if (response.StatusCode == HttpStatusCode.OK)
-                        {
-                            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                            {
-                                List<Uri> links = FetchLinksFromSource(sr.ReadToEnd());
-
-                                if (links.Count == 0)
-                                    return;
-                                else
-                                {
-                                    tempURL = links[0].ToString().Replace("file://", "http://");
-
-                                    try
-                                    {
-                                        for (int tries = 0; tries < 2; tries++)
-                                        {
-                                            using (response = MainWin.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                            {
-                                                using (var stream = response.GetResponseStream())
-                                                {
-                                                    string contentType = response.ContentType.ToLowerInvariant();
-                                                    if (contentType.StartsWith("text/html"))
-                                                    {
-                                                        var parameters = MainWin.Parse(stream, response.CharacterSet);
-                                                        cookies.Add(parameters[0], parameters[1]);
-                                                    }
-                                                    if (contentType.StartsWith("image"))
-                                                    {
-                                                        MainWin.imgStore = Image.FromStream(stream);
-                                                        if (MainWin.imgStore.Width > 10 && MainWin.imgStore.Height > 10)
-                                                        {
-                                                            string strFilename = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                            if (!blnDebug)
-                                                            {
-                                                                try
-                                                                { 
-                                                                    MainWin.SaveImage(MainWin.imgStore, strFilename, directory);
-
-                                                                    try
-                                                                    { 
-                                                                        toolStripProgressBar.Value++;
-                                                                        pbPercentage(toolStripProgressBar);
-                                                                    }
-                                                                    catch { /* Silent Failure */ }
-
-                                                                    Processing = false;
-                                                                }
-                                                                catch
-                                                                { }
-                                                            }
-                                                            break;
-                                                        }
-                                                        else
-                                                        {
-                                                            cookies = new NameValueCollection();
-
-                                                            using (var response2 = MainWin.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                                            {
-                                                                using (var stream2 = response2.GetResponseStream())
-                                                                {
-                                                                    if (contentType.StartsWith("text/html"))
-                                                                    {
-                                                                        var parameters = MainWin.Parse(stream2, response2.CharacterSet);
-                                                                        cookies.Add(parameters[0], parameters[1]);
-                                                                    }
-                                                                    if (contentType.StartsWith("image"))
-                                                                    {
-                                                                        MainWin.imgStore = Image.FromStream(stream2);
-                                                                        if (MainWin.imgStore.Width > 10 && MainWin.imgStore.Height > 10)
-                                                                        {
-                                                                            string strFilename = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-
-                                                                            if (!blnDebug)
-                                                                            {
-                                                                                try
-                                                                                { 
-                                                                                    MainWin.SaveImage(MainWin.imgStore, strFilename, directory);
-
-                                                                                    try
-                                                                                    {
-                                                                                        toolStripProgressBar.Value++;
-                                                                                        pbPercentage(toolStripProgressBar);
-                                                                                    }
-                                                                                    catch { /* Silent Failure */ }
-
-                                                                                    Processing = false;
-                                                                                }
-                                                                                catch
-                                                                                { }
-                                                                            }
-                                                                        }
-                                                                        break;
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    catch
-                                    { 
-                                        /* Silent Failure */
-                                        Processing = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        actionToolStripStatusLabel.Text = "1 out of 1" + " page processed.";
+                        toolStripProgressBar.Value++;
+                        pbPercentage(toolStripProgressBar);
                     }
-                    catch 
-                    { 
-                        /* Silent Failure */
-                        Processing = false;
-                    }
+
+                    actionToolStripStatusLabel.Text = "1 out of 1" + " page processed.";
                 }
             }
             else
@@ -550,122 +355,14 @@ namespace Batch_Image_DL_Lite
             if (BatchStart < BatchEnd + 1)
             {
                 string tag = "";
-                string tempURL = UrlParser(BatchUrl, out tag) + BatchStart + (MainWin.PrepExt(tag));
+                string tempURL = Downloader.UrlParser(BatchUrl, out tag) + BatchStart + (Downloader.PrepExt(tag));
                 statusToolStripStatusLabel.Text = "Running...";
 
-                var cookies = new NameValueCollection();
-
-                try
+                if (Downloader.AttemptDownload(tempURL, BatchDest, true))
                 {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(tempURL);
-                    request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                    request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                        {
-                            List<Uri> links = FetchLinksFromSource(sr.ReadToEnd());
-
-                            if (links.Count == 0)
-                                return;
-                            else
-                            {
-                                tempURL = links[0].ToString().Replace("file://", "http://");
-
-                                try
-                                {
-                                    for (int tries = 0; tries < 2; tries++)
-                                    {
-                                        using (response = MainWin.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                        {
-                                            using (var stream = response.GetResponseStream())
-                                            {
-                                                string contentType = response.ContentType.ToLowerInvariant();
-                                                if (contentType.StartsWith("text/html"))
-                                                {
-                                                    var parameters = MainWin.Parse(stream, response.CharacterSet);
-                                                    cookies.Add(parameters[0], parameters[1]);
-                                                }
-                                                if (contentType.StartsWith("image"))
-                                                {
-                                                    MainWin.imgStore = Image.FromStream(stream);
-                                                    if (MainWin.imgStore.Width > 10 && MainWin.imgStore.Height > 10)
-                                                    {
-                                                        string strFilename = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                        if (!blnDebug)
-                                                        {
-                                                            try
-                                                            { 
-                                                                MainWin.SaveImage(MainWin.imgStore, strFilename, BatchDest);
-                                                                try
-                                                                { 
-                                                                    toolStripProgressBar.Value++;
-                                                                    pbPercentage(toolStripProgressBar);
-                                                                }
-                                                                catch { /* Silent Failure */ }
-                                                            }
-                                                            catch
-                                                            { }
-                                                        }
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        cookies = new NameValueCollection();
-
-                                                        using (var response2 = MainWin.Builder(tempURL, new Uri(tempURL).Host, cookies))
-                                                        {
-                                                            using (var stream2 = response2.GetResponseStream())
-                                                            {
-                                                                if (contentType.StartsWith("text/html"))
-                                                                {
-                                                                    var parameters = MainWin.Parse(stream2, response2.CharacterSet);
-                                                                    cookies.Add(parameters[0], parameters[1]);
-                                                                }
-                                                                if (contentType.StartsWith("image"))
-                                                                {
-                                                                    MainWin.imgStore = Image.FromStream(stream2);
-                                                                    if (MainWin.imgStore.Width > 10 && MainWin.imgStore.Height > 10)
-                                                                    {
-                                                                        string strFilename = tempURL.Substring(tempURL.LastIndexOf('/') + 1);
-                                                                        if (!blnDebug)
-                                                                        {
-                                                                            try
-                                                                            { 
-                                                                                MainWin.SaveImage(MainWin.imgStore, strFilename, BatchDest);
-                                                                                try
-                                                                                {
-                                                                                    toolStripProgressBar.Value++;
-                                                                                    pbPercentage(toolStripProgressBar);
-                                                                                }
-                                                                                catch { /* Silent Failure */ }
-                                                                            }
-                                                                            catch
-                                                                            { }
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch
-                                { MessageBox.Show("Image does not exist!"); }
-                            }
-                        }
-                    }
+                    toolStripProgressBar.Value++;
+                    pbPercentage(toolStripProgressBar);
                 }
-                catch
-                { /* Silent Failure */ }
-
-                //Cursor.Current = Cursors.Default;
 
                 actionToolStripStatusLabel.Text = BatchStart + " out of " + BatchEnd + " pages processed.";
 
@@ -717,9 +414,16 @@ namespace Batch_Image_DL_Lite
             }
         }
 
+        
+
         private void BatchWin_Load(object sender, EventArgs e)
         {
             actionToolStripStatusLabel.Text = "";
+        }
+
+        private void downloadBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+
         }
     }
 }
