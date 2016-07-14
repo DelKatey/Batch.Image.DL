@@ -321,6 +321,113 @@ namespace System.Downloading
 
     internal class Downloader
     {
+        //This class is based on WhiteXZ's Downloader.cs code: https://gist.github.com/WhiteXZ/1e5c19ccf3f69e68744de21a805f3bf4
+        private string _url, _dest = System.Environment.SpecialFolder.MyPictures.ToString() + "\\Batch Downloaded\\", _filename = "error.404";
+        private Saving _save = Saving.No;
+        private Image _img = null;
+        private BackgroundWorker worker;
+        private int _min = 1, _max = 1;
 
+        private event EventHandler Completed;
+        private event ProgressChangedEventHandler ProgressChanged;
+
+        public Downloader(string url, string destination, Saving save)
+        {
+            _url = url;
+            _save = save;
+
+            if (_save == Saving.Yes)
+                _dest = destination;
+            else
+                _dest = String.Empty;
+
+            worker = new BackgroundWorker();
+            worker.DoWork += Worker_StopSlacking;
+            worker.ProgressChanged += Worker_InformMe;
+            worker.RunWorkerCompleted += Worker_EnjoyYourBreak;
+        }
+
+        public string Filename
+        {
+            get { return _filename; }
+        }
+
+        public Image Output
+        {
+            get { return _img; }
+        }
+
+        public string Destination
+        {
+            get { return _dest; }
+            set 
+            {
+                if (_save == Saving.Yes)
+                    _dest = value;
+                else
+                    System.Windows.Forms.MessageBox.Show("Sorry, you are not allowed to specify a location for images to be saved to, as this instance has been set to disallow downloading of all images.", "Action Not Allowed", Windows.Forms.MessageBoxButtons.OK, Windows.Forms.MessageBoxIcon.Error);
+            }
+        }
+
+        public string Link
+        {
+            get { return _url; }
+            set { _url = value; }
+        }
+
+        public enum Saving
+        {
+            Yes = 0x001,
+            No = 0x000
+        }
+
+        public Saving SaveToFile
+        {
+            get { return _save; }
+            set 
+            {
+                if (value == Saving.No)
+                    _dest = String.Empty;
+                _save = value; 
+            }
+        }
+
+        public void Start(string url, int page)
+        {
+            _url = url;
+            _min = page;
+            _max = 0;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, int start_page, int end_page)
+        {
+            _url = url;
+            _min = start_page;
+            _max = end_page;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Cancel()
+        {
+            worker.CancelAsync();
+        }
+
+        private void Worker_StopSlacking(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void Worker_InformMe(object sender, ProgressChangedEventArgs e)
+        {
+            ProgressChanged.Invoke(this, e);
+        }
+
+        private void Worker_EnjoyYourBreak(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Completed.Invoke(this, new EventArgs());
+        }
     }
 }
