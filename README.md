@@ -1,6 +1,6 @@
 ## Notes
 
-Ignore this, this is broken.
+This is broken. Ignore this.
 
 ## License
 
