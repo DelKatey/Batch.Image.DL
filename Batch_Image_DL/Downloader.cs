@@ -565,6 +565,14 @@ namespace System.Downloading
 
         private void Worker_StopSlacking(object sender, DoWorkEventArgs e)
         {
+            if (!_url.Contains("mangafox") && !_url.Contains("mangahere") && (!_url.Contains("xkcd") || _url.Contains("explain") || _url.Contains("wiki")) )
+            {
+                System.Windows.Forms.MessageBox.Show("The program can currently only accept " + (!_url.Contains("mangafox") ? "MangaFox" : (!_url.Contains("mangahere") ? "MangaHere" : "Xkcd"))  + " links!", "Invalid URL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                worker.CancelAsync();
+                Successful = false;
+                return;
+            }
+
             if (_max == 0) // Only one page will be processed
             {
                 if (_preview == Previewing.Yes) //For when using MainWin
@@ -592,26 +600,29 @@ namespace System.Downloading
             }
             else // A range of pages will be processed
             {
-                if (_preview == Previewing.Yes) //For when using MainWin
+                for (int initialValue = _min; initialValue < _max; initialValue++)
                 {
-                    if (_save == Saving.No) // For when using either two of the preview options in MainWin
+                    if (_preview == Previewing.Yes) //For when using MainWin
                     {
+                        if (_save == Saving.No) // For when using either two of the preview options in MainWin
+                        {
 
+                        }
+                        else // For when using either two of the Download options in MainWin
+                        {
+
+                        }
                     }
-                    else // For when using either two of the Download options in MainWin
+                    else //For when using BatchWin
                     {
+                        if (_save == Saving.Yes) // For normal BatchWin operations 
+                        {
 
-                    }
-                }
-                else //For when using BatchWin
-                {
-                    if (_save == Saving.Yes) // For normal BatchWin operations 
-                    {
+                        }
+                        else //Solely for debugging of BatchWin operations, this will rarely be used.
+                        {
 
-                    }
-                    else //Solely for debugging of BatchWin operations, this will rarely be used.
-                    {
-
+                        }
                     }
                 }
             }
