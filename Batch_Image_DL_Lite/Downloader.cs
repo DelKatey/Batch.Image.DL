@@ -250,7 +250,9 @@ namespace System.Downloading
                                                             return false;
                                                         }
                                                     }
-                                                    break;
+                                                    else
+                                                        return true;
+                                                    //break;
                                                 }
                                                 else
                                                 {
