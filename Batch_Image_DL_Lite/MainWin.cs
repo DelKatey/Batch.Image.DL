@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Downloader;
+using System.Downloading;
 using Ookii.Dialogs;
 
 namespace Batch_Image_DL_Lite
@@ -146,7 +146,7 @@ namespace Batch_Image_DL_Lite
                         {
                             using (StreamReader sr = new StreamReader(response.GetResponseStream()))
                             {
-                                List<Uri> links = Downloader.FetchLinksFromSource(sr.ReadToEnd());
+                                List<Uri> links = Downloading.FetchLinksFromSource(sr.ReadToEnd());
 
                                 if (links.Count == 0)
                                     return false;
@@ -158,14 +158,14 @@ namespace Batch_Image_DL_Lite
                                     {
                                         for (int tries = 0; tries < 2; tries++)
                                         {
-                                            using (response = Downloader.Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                            using (response = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
                                             {
                                                 using (var stream = response.GetResponseStream())
                                                 {
                                                     string contentType = response.ContentType.ToLowerInvariant();
                                                     if (contentType.StartsWith("text/html"))
                                                     {
-                                                        var parameters = Downloader.Parse(stream, response.CharacterSet);
+                                                        var parameters = Downloading.Parse(stream, response.CharacterSet);
                                                         cookies.Add(parameters[0], parameters[1]);
                                                     }
                                                     if (contentType.StartsWith("image"))
@@ -188,13 +188,13 @@ namespace Batch_Image_DL_Lite
                                                         {
                                                             cookies = new NameValueCollection();
 
-                                                            using (var response2 = Downloader.Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                                            using (var response2 = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
                                                             {
                                                                 using (var stream2 = response2.GetResponseStream())
                                                                 {
                                                                     if (contentType.StartsWith("text/html"))
                                                                     {
-                                                                        var parameters = Downloader.Parse(stream2, response2.CharacterSet);
+                                                                        var parameters = Downloading.Parse(stream2, response2.CharacterSet);
                                                                         cookies.Add(parameters[0], parameters[1]);
                                                                     }
                                                                     if (contentType.StartsWith("image"))
@@ -305,7 +305,7 @@ namespace Batch_Image_DL_Lite
         {
             if (!Batched)
             {
-                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloader.TryParse(range1TextBox.Text))
+                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloading.TryParse(range1TextBox.Text))
                 {
                     MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : "first page number field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
@@ -315,9 +315,9 @@ namespace Batch_Image_DL_Lite
             }
             else
             {
-                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloader.TryParse(range1TextBox.Text) || !Downloader.TryParse(range2TextBox.Text))
+                if (!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute) || !Downloading.TryParse(range1TextBox.Text) || !Downloading.TryParse(range2TextBox.Text))
                 {
-                    MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : (!Downloader.TryParse(range1TextBox.Text) ? "first page number" : "last page number") + " field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The " + ((!Uri.IsWellFormedUriString(urlTextBox.Text, UriKind.Absolute)) ? "URL is invalid!" : (!Downloading.TryParse(range1TextBox.Text) ? "first page number" : "last page number") + " field contains invalid characters! Namely, non-numeric ones."), "Invalid Parameters", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return true;
                 }
                 else
@@ -328,7 +328,7 @@ namespace Batch_Image_DL_Lite
         private string UrlParser(string input, TextBox oTextBox)//ComboBox inputCBox)
         {
             string otherresult = "";
-            string result = Downloader.UrlParser(input, out otherresult);
+            string result = Downloading.UrlParser(input, out otherresult);
             oTextBox.Tag = otherresult;
             return result;
         }
@@ -527,7 +527,7 @@ namespace Batch_Image_DL_Lite
                     {
                         using (StreamReader sr = new StreamReader(response.GetResponseStream()))
                         {
-                            List<Uri> links = Downloader.FetchLinksFromSource(sr.ReadToEnd());
+                            List<Uri> links = Downloading.FetchLinksFromSource(sr.ReadToEnd());
 
                             if (links.Count == 0)
                                 return;
@@ -539,14 +539,14 @@ namespace Batch_Image_DL_Lite
                                 {
                                     for (int tries = 0; tries < 2; tries++)
                                     {
-                                        using (response = Downloader.Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                        using (response = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
                                         {
                                             using (var stream = response.GetResponseStream())
                                             {
                                                 string contentType = response.ContentType.ToLowerInvariant();
                                                 if (contentType.StartsWith("text/html"))
                                                 {
-                                                    var parameters = Downloader.Parse(stream, response.CharacterSet);
+                                                    var parameters = Downloading.Parse(stream, response.CharacterSet);
                                                     cookies.Add(parameters[0], parameters[1]);
                                                 }
                                                 if (contentType.StartsWith("image"))
@@ -569,13 +569,13 @@ namespace Batch_Image_DL_Lite
                                                     {
                                                         cookies = new NameValueCollection();
 
-                                                        using (var response2 = Downloader.Builder(tempURL, new Uri(tempURL).Host, cookies))
+                                                        using (var response2 = Downloading.Builder(tempURL, new Uri(tempURL).Host, cookies))
                                                         {
                                                             using (var stream2 = response2.GetResponseStream())
                                                             {
                                                                 if (contentType.StartsWith("text/html"))
                                                                 {
-                                                                    var parameters = Downloader.Parse(stream2, response2.CharacterSet);
+                                                                    var parameters = Downloading.Parse(stream2, response2.CharacterSet);
                                                                     cookies.Add(parameters[0], parameters[1]);
                                                                 }
                                                                 if (contentType.StartsWith("image"))

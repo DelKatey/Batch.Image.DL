@@ -11,7 +11,7 @@ using System.Net;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Downloader;
+using System.Downloading;
 
 namespace Batch_Image_DL_Lite
 {
@@ -239,7 +239,7 @@ namespace Batch_Image_DL_Lite
 
                     foreach (ListViewItem lvi in entriesListView.Items)
                     {
-                        if (!String.IsNullOrWhiteSpace(lvi.SubItems[2].Text) && Downloader.TryParse(lvi.SubItems[2].Text))
+                        if (!String.IsNullOrWhiteSpace(lvi.SubItems[2].Text) && Downloading.TryParse(lvi.SubItems[2].Text))
                         {
                             TotalPages += ((int.Parse(lvi.SubItems[2].Text) - int.Parse(lvi.SubItems[1].Text)) + 1);
                         }
@@ -276,7 +276,7 @@ namespace Batch_Image_DL_Lite
         private string UrlParser(string input, TextBox oTextBox)//ComboBox inputCBox)
         {
             string otherresult = "";
-            string result = Downloader.UrlParser(input, out otherresult);
+            string result = Downloading.UrlParser(input, out otherresult);
             oTextBox.Tag = otherresult;
             return result;
         }
@@ -289,7 +289,7 @@ namespace Batch_Image_DL_Lite
                 string tag = "";
                 Processing = true;
 
-                if (!String.IsNullOrWhiteSpace(end) && Downloader.TryParse(end))
+                if (!String.IsNullOrWhiteSpace(end) && Downloading.TryParse(end))
                 {
                     BatchUrl = url;
                     BatchDest = directory;
@@ -309,9 +309,9 @@ namespace Batch_Image_DL_Lite
                         return;
                     }
 
-                    string tempURL = Downloader.UrlParser(url, out tag) + int.Parse(start) + (Downloader.PrepExt(tag));
+                    string tempURL = Downloading.UrlParser(url, out tag) + int.Parse(start) + (Downloading.PrepExt(tag));
 
-                    if (Downloader.AttemptDownload(tempURL, directory, true))
+                    if (Downloading.AttemptDownload(tempURL, directory, true))
                     {
                         toolStripProgressBar.Value++;
                         pbPercentage(toolStripProgressBar);
@@ -355,10 +355,10 @@ namespace Batch_Image_DL_Lite
             if (BatchStart < BatchEnd + 1)
             {
                 string tag = "";
-                string tempURL = Downloader.UrlParser(BatchUrl, out tag) + BatchStart + (Downloader.PrepExt(tag));
+                string tempURL = Downloading.UrlParser(BatchUrl, out tag) + BatchStart + (Downloading.PrepExt(tag));
                 statusToolStripStatusLabel.Text = "Running...";
 
-                if (Downloader.AttemptDownload(tempURL, BatchDest, true))
+                if (Downloading.AttemptDownload(tempURL, BatchDest, true))
                 {
                     toolStripProgressBar.Value++;
                     pbPercentage(toolStripProgressBar);
