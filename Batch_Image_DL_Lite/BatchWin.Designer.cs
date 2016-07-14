@@ -77,11 +77,11 @@
             this.startpageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.endpageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.dirColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.queueTimer = new System.Windows.Forms.Timer(this.components);
             this.batchTimer = new System.Windows.Forms.Timer(this.components);
             this.batchStatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.actionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1.SuspendLayout();
             this.detailsGroupBox.SuspendLayout();
@@ -608,6 +608,13 @@
             this.dirColumnHeader.Text = "Save to...";
             this.dirColumnHeader.Width = 260;
             // 
+            // toolStripProgressBar
+            // 
+            this.toolStripProgressBar.Name = "toolStripProgressBar";
+            this.toolStripProgressBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.toolStripProgressBar.Size = new System.Drawing.Size(150, 16);
+            this.toolStripProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            // 
             // queueTimer
             // 
             this.queueTimer.Interval = 500;
@@ -615,6 +622,7 @@
             // 
             // batchTimer
             // 
+            this.batchTimer.Interval = 300;
             this.batchTimer.Tick += new System.EventHandler(this.batchTimer_Tick);
             // 
             // batchStatusStrip
@@ -634,13 +642,6 @@
             this.statusToolStripStatusLabel.Name = "statusToolStripStatusLabel";
             this.statusToolStripStatusLabel.Size = new System.Drawing.Size(26, 17);
             this.statusToolStripStatusLabel.Text = "Idle";
-            // 
-            // toolStripProgressBar
-            // 
-            this.toolStripProgressBar.Name = "toolStripProgressBar";
-            this.toolStripProgressBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStripProgressBar.Size = new System.Drawing.Size(150, 16);
-            this.toolStripProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // actionToolStripStatusLabel
             // 

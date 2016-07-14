@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Net;
@@ -93,8 +94,9 @@ namespace Batch_Image_DL_Lite
                     ((Button)sender).Text = "Apply Edit";
                     foreach (Control c in controlsGroupBox.Controls)
                     {
-                        if (c.Name != "modifyButton")
-                            c.Enabled = false;
+                        foreach (Control cc in c.Controls)
+                            if (cc.Name.ToLower().Contains("button") && !cc.Name.Contains("modify"))
+                                cc.Enabled = false;
                     }
                 }
             }
@@ -108,12 +110,18 @@ namespace Batch_Image_DL_Lite
                         {
                             if (!String.IsNullOrWhiteSpace(startTextBox.Text))
                             {
-                                if (!String.IsNullOrWhiteSpace(dirTextBox.Text) && Uri.IsWellFormedUriString(dirTextBox.Text, UriKind.Absolute))
+                                if (!String.IsNullOrWhiteSpace(dirTextBox.Text) && Path.IsPathRooted(dirTextBox.Text))
                                 {
                                     entriesListView.Items[SelectedIndex].SubItems[0].Text = urlTextBox.Text.Trim();
                                     entriesListView.Items[SelectedIndex].SubItems[1].Text = startTextBox.Text.Trim();
                                     entriesListView.Items[SelectedIndex].SubItems[2].Text = endTextBox.Text.Trim();
                                     entriesListView.Items[SelectedIndex].SubItems[3].Text = dirTextBox.Text.Trim();
+
+                                    foreach (Control c in controlsGroupBox.Controls)
+                                    {
+                                        foreach (Control cc in c.Controls)
+                                            cc.Enabled = true;
+                                    }
                                 }
                                 else
                                     MessageBox.Show("Sorry, the provided destination path is invalid.", "Missing Destination", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -132,10 +140,6 @@ namespace Batch_Image_DL_Lite
 
                 ClearFields();
                 ((Button)sender).Text = "Edit Entry";
-                foreach (Control c in controlsGroupBox.Controls)
-                {
-                    c.Enabled = true;
-                }
             }
             //else
             //    ((Button)sender).Text = "Edit Entry";
@@ -206,7 +210,7 @@ namespace Batch_Image_DL_Lite
         {
             urlTextBox.Enabled = startTextBox.Enabled = endTextBox.Enabled = dirTextBox.Enabled =
                 addButton.Enabled = modifyButton.Enabled = removeButton.Enabled =
-                upButton.Enabled = downButton.Enabled = state;
+                upButton.Enabled = downButton.Enabled = browseButton.Enabled = state;
 
             listviewCoverPanel.Visible = !state;
             if (state)
@@ -431,7 +435,10 @@ namespace Batch_Image_DL_Lite
                                                                     MainWin.SaveImage(MainWin.imgStore, strFilename, directory);
 
                                                                     try
-                                                                    { toolStripProgressBar.Value++; }
+                                                                    { 
+                                                                        toolStripProgressBar.Value++;
+                                                                        pbPercentage(toolStripProgressBar);
+                                                                    }
                                                                     catch { /* Silent Failure */ }
 
                                                                     Processing = false;
@@ -468,7 +475,10 @@ namespace Batch_Image_DL_Lite
                                                                                     MainWin.SaveImage(MainWin.imgStore, strFilename, directory);
 
                                                                                     try
-                                                                                    { toolStripProgressBar.Value++; }
+                                                                                    {
+                                                                                        toolStripProgressBar.Value++;
+                                                                                        pbPercentage(toolStripProgressBar);
+                                                                                    }
                                                                                     catch { /* Silent Failure */ }
 
                                                                                     Processing = false;
@@ -512,6 +522,26 @@ namespace Batch_Image_DL_Lite
         private void PathBrancher(ListViewItem lvi)
         {
             PathBrancher(lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text); 
+        }
+
+        private void pbPercentage(ToolStripProgressBar pb)
+        {
+            //http://stackoverflow.com/questions/7708904/adding-text-to-the-tool-strip-progress-bar
+            int percent = (int)(((double)(pb.Value - pb.Minimum) /
+            (double)(pb.Maximum - pb.Minimum)) * 100);
+
+            using (Graphics gr = pb.ProgressBar.CreateGraphics())
+            {
+                //Switch to Antialiased drawing for better (smoother) graphic results
+                gr.SmoothingMode = SmoothingMode.AntiAlias;
+                gr.DrawString(percent.ToString() + "%",
+                    SystemFonts.DefaultFont,
+                    Brushes.Black,
+                    new PointF(pb.Width / 2 - (gr.MeasureString(percent.ToString() + "%",
+                        SystemFonts.DefaultFont).Width / 2.0F),
+                    pb.Height / 2 - (gr.MeasureString(percent.ToString() + "%",
+                        SystemFonts.DefaultFont).Height / 2.0F)));
+            }
         }
         #endregion
 
@@ -570,7 +600,10 @@ namespace Batch_Image_DL_Lite
                                                             { 
                                                                 MainWin.SaveImage(MainWin.imgStore, strFilename, BatchDest);
                                                                 try
-                                                                { toolStripProgressBar.Value++; }
+                                                                { 
+                                                                    toolStripProgressBar.Value++;
+                                                                    pbPercentage(toolStripProgressBar);
+                                                                }
                                                                 catch { /* Silent Failure */ }
                                                             }
                                                             catch
@@ -603,7 +636,10 @@ namespace Batch_Image_DL_Lite
                                                                             { 
                                                                                 MainWin.SaveImage(MainWin.imgStore, strFilename, BatchDest);
                                                                                 try
-                                                                                { toolStripProgressBar.Value++; }
+                                                                                {
+                                                                                    toolStripProgressBar.Value++;
+                                                                                    pbPercentage(toolStripProgressBar);
+                                                                                }
                                                                                 catch { /* Silent Failure */ }
                                                                             }
                                                                             catch
