@@ -333,6 +333,7 @@ namespace System.Downloading
         private event ProgressChangedEventHandler ProgressChanged;
 
         public bool Successful { get; private set; }
+        public bool Cancelled { get; private set; }
 
         public Downloader(string url, string destination, Saving save)
         {
@@ -343,6 +344,9 @@ namespace System.Downloading
                 _dest = destination;
             else
                 _dest = String.Empty;
+
+            Cancelled = false;
+            Successful = false;
 
             worker = new BackgroundWorker();
             worker.DoWork += Worker_StopSlacking;
@@ -570,6 +574,7 @@ namespace System.Downloading
                 System.Windows.Forms.MessageBox.Show("The program can currently only accept " + (!_url.Contains("mangafox") ? "MangaFox" : (!_url.Contains("mangahere") ? "MangaHere" : "Xkcd"))  + " links!", "Invalid URL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 worker.CancelAsync();
                 Successful = false;
+                Cancelled = true;
                 return;
             }
 
