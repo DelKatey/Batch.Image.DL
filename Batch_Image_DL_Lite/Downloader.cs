@@ -332,6 +332,8 @@ namespace System.Downloading
         private event EventHandler Completed;
         private event ProgressChangedEventHandler ProgressChanged;
 
+        public bool Successful { get; private set; }
+
         public Downloader(string url, string destination, Saving save)
         {
             _url = url;
@@ -565,11 +567,53 @@ namespace System.Downloading
         {
             if (_max == 0) // Only one page will be processed
             {
-                
+                if (_preview == Previewing.Yes) //For when using MainWin
+                {
+                    if (_save == Saving.No) // For when using either two of the preview options in MainWin
+                    {
+
+                    }
+                    else // For when using either two of the Download options in MainWin
+                    {
+
+                    }
+                }
+                else //For when using BatchWin
+                {
+                    if (_save == Saving.Yes) // For normal BatchWin operations 
+                    {
+
+                    }
+                    else //Solely for debugging of BatchWin operations, this will rarely be used.
+                    {
+
+                    }
+                }
             }
             else // A range of pages will be processed
             {
+                if (_preview == Previewing.Yes) //For when using MainWin
+                {
+                    if (_save == Saving.No) // For when using either two of the preview options in MainWin
+                    {
 
+                    }
+                    else // For when using either two of the Download options in MainWin
+                    {
+
+                    }
+                }
+                else //For when using BatchWin
+                {
+                    if (_save == Saving.Yes) // For normal BatchWin operations 
+                    {
+
+                    }
+                    else //Solely for debugging of BatchWin operations, this will rarely be used.
+                    {
+
+                    }
+                }
             }
         }
 
