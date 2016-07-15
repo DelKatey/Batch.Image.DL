@@ -234,67 +234,25 @@ namespace System.Downloading
                                             if (contentType.StartsWith("image"))
                                             {
                                                 img = Image.FromStream(stream);
-                                                if (img.Width > 10 && img.Height > 10)
+
+                                                filename = url.Substring(url.LastIndexOf('/') + 1);
+                                                if (save)
                                                 {
-                                                    filename = url.Substring(url.LastIndexOf('/') + 1);
-                                                    if (save)
+                                                    try
                                                     {
-                                                        try
-                                                        {
-                                                            SaveImage(img, filename, destination);
-                                                            return true;
-                                                        }
-                                                        catch
-                                                        {
-                                                            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "1ws2f4swr01");
-                                                            return false;
-                                                        }
-                                                    }
-                                                    else
+                                                        SaveImage(img, filename, destination);
                                                         return true;
-                                                    //break;
+                                                    }
+                                                    catch
+                                                    {
+                                                        System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "1ws2f4swr01");
+                                                        return false;
+                                                    }
                                                 }
                                                 else
-                                                {
-                                                    cookies = new NameValueCollection();
-
-                                                    using (var newresponse = Builder(url, new Uri(url).Host, cookies))
-                                                    {
-                                                        using (var newstream = newresponse.GetResponseStream())
-                                                        {
-                                                            if (contentType.StartsWith("text/html"))
-                                                            {
-                                                                var parameters = Parse(newstream, newresponse.CharacterSet);
-                                                                cookies.Add(parameters[0], parameters[1]);
-                                                            }
-                                                            if (contentType.StartsWith("image"))
-                                                            {
-                                                                img = Image.FromStream(newstream);
-                                                                if (img.Width > 10 && img.Height > 10)
-                                                                {
-                                                                    filename = url.Substring(url.LastIndexOf('/') + 1);
-                                                                    if (save)
-                                                                    {
-                                                                        try
-                                                                        {
-                                                                            SaveImage(img, filename, destination);
-                                                                            return true;
-                                                                        }
-                                                                        catch
-                                                                        {
-                                                                            System.Windows.Forms.MessageBox.Show("Debug Error Code: " + "2ws2f4swr02");
-                                                                            return false;
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                        return true;
-                                                                }
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                    return true;
                                             }
+                                            break;
                                         }
                                     }
                                 }
@@ -334,6 +292,7 @@ namespace System.Downloading
 
         public bool Successful { get; private set; }
         public bool Cancelled { get; private set; }
+        public string Name { get; set; }
 
         public Downloader(string url, string destination, Saving save)
         {
@@ -347,7 +306,7 @@ namespace System.Downloading
 
             Cancelled = false;
             Successful = false;
-
+            
             worker = new BackgroundWorker();
             worker.DoWork += Worker_StopSlacking;
             worker.ProgressChanged += Worker_InformMe;
@@ -616,7 +575,7 @@ namespace System.Downloading
         {
             if (!_url.Contains("mangafox") && !_url.Contains("mangahere") && (!_url.Contains("xkcd") || _url.Contains("explain") || _url.Contains("wiki")) )
             {
-                System.Windows.Forms.MessageBox.Show("The program can currently only accept " + (!_url.Contains("mangafox") ? "MangaFox" : (!_url.Contains("mangahere") ? "MangaHere" : "Xkcd"))  + " links!", "Invalid URL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("The program can currently only accept MangaFox, MangaHere or Xkcd links!", "Invalid URL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 worker.CancelAsync();
                 Successful = false;
                 Cancelled = true;
@@ -651,6 +610,7 @@ namespace System.Downloading
                             Successful = true;
                     }
                 }
+            #region Commented Out Code
             //}
             //else // A range of pages will be processed
             //{
@@ -682,6 +642,7 @@ namespace System.Downloading
             //        }
             //    }
             //}
+            #endregion
         }
 
         private void Worker_InformMe(object sender, ProgressChangedEventArgs e)
@@ -692,6 +653,51 @@ namespace System.Downloading
         private void Worker_EnjoyYourBreak(object sender, RunWorkerCompletedEventArgs e)
         {
             Completed.Invoke(this, new EventArgs());
+        }
+    }
+
+    internal class Individualise
+    {
+        private List<Downloader> DL_Instances;
+        internal static List<Image> images;
+        private string _url, _destination, _ext;
+        private int _pages;
+        private BackgroundWorker worker = new BackgroundWorker();
+
+        public Individualise(string url, int start_page, int end_page, string destination)
+        {
+            DL_Instances = new List<Downloader>();
+            images = new List<Image>();
+
+            _destination = destination;
+
+            for (int page = start_page; page < end_page; page++)
+            {
+                _url = Downloading.UrlParser(url, out _ext);
+                Downloader objDownload = new Downloader(_url + page.ToString() + _ext, _destination, Downloader.Saving.Yes);
+                objDownload.Name = page.ToString().PadLeft(4);
+
+                DL_Instances.Add(objDownload);
+            }
+
+            worker.DoWork += Worker_StopSlacking;
+            //worker.ProgressChanged += Worker_InformMe;
+            worker.RunWorkerCompleted += Worker_EnjoyYourBreak;
+        }
+
+        private void Worker_StopSlacking(object sender, DoWorkEventArgs e)
+        {
+            
+        }
+
+        private void Worker_InformMe(object sender, ProgressChangedEventArgs e)
+        {
+            
+        }
+
+        private void Worker_EnjoyYourBreak(object sender, RunWorkerCompletedEventArgs e)
+        {
+
         }
     }
 }

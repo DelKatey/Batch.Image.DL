@@ -230,6 +230,7 @@ namespace Batch_Image_DL
         {
             if (((Button)sender).Text == "Start Processing")
             {
+
                 if (entriesListView.Items.Count != 0)
                 {
                     ((Button)sender).Text = "Stop Processing";
