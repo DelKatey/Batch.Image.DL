@@ -327,7 +327,7 @@ namespace System.Downloading
         private Previewing _preview = Previewing.No;
         private Image _img = null;
         private BackgroundWorker worker;
-        private int _min = 1, _max = 1;
+        //private int _min = 1, _max = 1;
 
         private event EventHandler Completed;
         private event ProgressChangedEventHandler ProgressChanged;
@@ -413,34 +413,20 @@ namespace System.Downloading
 
         public void Start(string url)
         {
+            Cancelled = false;
             _url = url;
-            _min = 1;
-            _max = 0;
+            //_min = 1;
+            //_max = 0;
 
             worker.RunWorkerAsync();
         }
 
-        public void Start(int page)
+        public void Start(string url, Saving save, string destination)
         {
-            _min = page;
-            _max = 0;
-
-            worker.RunWorkerAsync();
-        }
-
-        public void Start(int page, Previewing preview)
-        {
-            _min = page;
-            _max = 0;
-            _preview = preview;
-
-            worker.RunWorkerAsync();
-        }
-
-        public void Start(int page, Saving save, string destination)
-        {
-            _min = page;
-            _max = 0;
+            Cancelled = false;
+            _url = url;
+            //_min = 1;
+            //_max = 0;
             _save = save;
             if (save == Saving.Yes)
                 _dest = destination;
@@ -450,120 +436,179 @@ namespace System.Downloading
             worker.RunWorkerAsync();
         }
 
-        public void Start(int page, Previewing preview, Saving save, string destination)
+        public void Start(string url, Previewing preview)
         {
-            _min = page;
-            _max = 0;
+            Cancelled = false;
+            _url = url;
+            //_min = 1;
+            //_max = 0;
             _preview = preview;
+
+            worker.RunWorkerAsync();
+        }
+
+        public void Start(string url, Saving save, Previewing preview, string destination)
+        {
+            Cancelled = false;
+            _url = url;
+            //_min = 1;
+            //_max = 0;
             _save = save;
             if (save == Saving.Yes)
                 _dest = destination;
             else
                 _dest = String.Empty;
 
-            worker.RunWorkerAsync();
-        }
-
-        public void Start(string url, int page)
-        {
-            _url = url;
-            _min = page;
-            _max = 0;
-
-            worker.RunWorkerAsync();
-        }
-
-        public void Start(string url, int page, Previewing preview)
-        {
-            _url = url;
-            _min = page;
-            _max = 0;
             _preview = preview;
 
             worker.RunWorkerAsync();
         }
 
-        public void Start(string url, int page, Saving save, string destination)
-        {
-            _url = url;
-            _min = page;
-            _max = 0;
-            _save = save;
-            if (save == Saving.Yes)
-                _dest = destination;
-            else
-                _dest = String.Empty;
+        //public void Start(int page)
+        //{
+        //    _min = page;
+        //    _max = 0;
 
-            worker.RunWorkerAsync();
-        }
+        //    worker.RunWorkerAsync();
+        //}
 
-        public void Start(string url, int page, Previewing preview, Saving save, string destination)
-        {
-            _url = url;
-            _min = page;
-            _max = 0;
-            _preview = preview;
-            _save = save;
-            if (save == Saving.Yes)
-                _dest = destination;
-            else
-                _dest = String.Empty;
+        //public void Start(int page, Previewing preview)
+        //{
+        //    _min = page;
+        //    _max = 0;
+        //    _preview = preview;
 
-            worker.RunWorkerAsync();
-        }
+        //    worker.RunWorkerAsync();
+        //}
 
-        public void Start(string url, int start_page, int end_page)
-        {
-            _url = url;
-            _min = start_page;
-            _max = end_page;
+        //public void Start(int page, Saving save, string destination)
+        //{
+        //    _min = page;
+        //    _max = 0;
+        //    _save = save;
+        //    if (save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
 
-            worker.RunWorkerAsync();
-        }
+        //    worker.RunWorkerAsync();
+        //}
 
-        public void Start(string url, int start_page, int end_page, Previewing preview)
-        {
-            _url = url;
-            _min = start_page;
-            _max = end_page;
-            _preview = preview;
+        //public void Start(int page, Previewing preview, Saving save, string destination)
+        //{
+        //    _min = page;
+        //    _max = 0;
+        //    _preview = preview;
+        //    _save = save;
+        //    if (save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
 
-            worker.RunWorkerAsync();
-        }
+        //    worker.RunWorkerAsync();
+        //}
 
-        public void Start(string url, int start_page, int end_page, Saving save, string destination)
-        {
-            _url = url;
-            _min = start_page;
-            _max = end_page;
-            _save = save;
+        //public void Start(string url, int page)
+        //{
+        //    _url = url;
+        //    _min = page;
+        //    _max = 0;
 
-            if (_save == Saving.Yes)
-                _dest = destination;
-            else
-                _dest = String.Empty;
+        //    worker.RunWorkerAsync();
+        //}
 
-            worker.RunWorkerAsync();
-        }
+        //public void Start(string url, int page, Previewing preview)
+        //{
+        //    _url = url;
+        //    _min = page;
+        //    _max = 0;
+        //    _preview = preview;
 
-        public void Start(string url, int start_page, int end_page, Previewing preview, Saving save, string destination)
-        {
-            _url = url;
-            _min = start_page;
-            _max = end_page;
-            _save = save;
-            _preview = preview;
+        //    worker.RunWorkerAsync();
+        //}
 
-            if (_save == Saving.Yes)
-                _dest = destination;
-            else
-                _dest = String.Empty;
+        //public void Start(string url, int page, Saving save, string destination)
+        //{
+        //    _url = url;
+        //    _min = page;
+        //    _max = 0;
+        //    _save = save;
+        //    if (save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
 
-            worker.RunWorkerAsync();
-        }
+        //    worker.RunWorkerAsync();
+        //}
+
+        //public void Start(string url, int page, Previewing preview, Saving save, string destination)
+        //{
+        //    _url = url;
+        //    _min = page;
+        //    _max = 0;
+        //    _preview = preview;
+        //    _save = save;
+        //    if (save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
+
+        //    worker.RunWorkerAsync();
+        //}
+
+        //public void Start(string url, int start_page, int end_page)
+        //{
+        //    _url = url;
+        //    _min = start_page;
+        //    _max = end_page;
+
+        //    worker.RunWorkerAsync();
+        //}
+
+        //public void Start(string url, int start_page, int end_page, Previewing preview)
+        //{
+        //    _url = url;
+        //    _min = start_page;
+        //    _max = end_page;
+        //    _preview = preview;
+
+        //    worker.RunWorkerAsync();
+        //}
+
+        //public void Start(string url, int start_page, int end_page, Saving save, string destination)
+        //{
+        //    _url = url;
+        //    _min = start_page;
+        //    _max = end_page;
+        //    _save = save;
+
+        //    if (_save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
+
+        //    worker.RunWorkerAsync();
+        //}
+
+        //public void Start(string url, int start_page, int end_page, Previewing preview, Saving save, string destination)
+        //{
+        //    _url = url;
+        //    _min = start_page;
+        //    _max = end_page;
+        //    _save = save;
+        //    _preview = preview;
+
+        //    if (_save == Saving.Yes)
+        //        _dest = destination;
+        //    else
+        //        _dest = String.Empty;
+
+        //    worker.RunWorkerAsync();
+        //}
 
         public void Cancel()
         {
+            Cancelled = true;
             worker.CancelAsync();
         }
 
@@ -578,59 +623,65 @@ namespace System.Downloading
                 return;
             }
 
-            if (_max == 0) // Only one page will be processed
-            {
+            //if (_max == 0) // Only one page will be processed
+            //{
                 if (_preview == Previewing.Yes) //For when using MainWin
                 {
-                    if (_save == Saving.No) // For when using either two of the preview options in MainWin
+                    if (_save == Saving.No) // For when using one of the preview options in MainWin
                     {
-
+                        if (Downloading.AttemptDownload(_url, String.Empty, false, out _img, out _filename))
+                            Successful = true;
                     }
-                    else // For when using either two of the Download options in MainWin
+                    else // For when using one of the Download options in MainWin
                     {
-
+                        if (Downloading.AttemptDownload(_url, _dest, true, out _img, out _filename))
+                            Successful = true;
                     }
                 }
                 else //For when using BatchWin
                 {
                     if (_save == Saving.Yes) // For normal BatchWin operations 
                     {
-
+                        if (Downloading.AttemptDownload(_url, _dest, true))
+                            Successful = true;
                     }
                     else //Solely for debugging of BatchWin operations, this will rarely be used.
                     {
-
+                        if (Downloading.AttemptDownload(_url, String.Empty, false))
+                            Successful = true;
                     }
                 }
-            }
-            else // A range of pages will be processed
-            {
-                for (int initialValue = _min; initialValue < _max; initialValue++)
-                {
-                    if (_preview == Previewing.Yes) //For when using MainWin
-                    {
-                        if (_save == Saving.No) // For when using either two of the preview options in MainWin
-                        {
+            //}
+            //else // A range of pages will be processed
+            //{
+            //    for (int initialValue = _min; initialValue < _max; initialValue++)
+            //    {
+            //        if (_preview == Previewing.Yes) //For when using MainWin
+            //        {
+            //            if (_save == Saving.No) // For when using one of the preview options in MainWin
+            //            {
+            //                if (Downloading.AttemptDownload(_url, String.Empty, false, out _img, out _filename))
+            //                    Successful = true;
+            //            }
+            //            else // For when using one of the Download options in MainWin
+            //            {
+            //                if (Downloading.AttemptDownload(_url, _dest, true))
+            //                    Successful = true;
+            //            }
+            //        }
+            //        else //For when using BatchWin
+            //        {
+            //            if (_save == Saving.Yes) // For normal BatchWin operations 
+            //            {
 
-                        }
-                        else // For when using either two of the Download options in MainWin
-                        {
+            //            }
+            //            else //Solely for debugging of BatchWin operations, this will rarely be used.
+            //            {
 
-                        }
-                    }
-                    else //For when using BatchWin
-                    {
-                        if (_save == Saving.Yes) // For normal BatchWin operations 
-                        {
-
-                        }
-                        else //Solely for debugging of BatchWin operations, this will rarely be used.
-                        {
-
-                        }
-                    }
-                }
-            }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private void Worker_InformMe(object sender, ProgressChangedEventArgs e)
