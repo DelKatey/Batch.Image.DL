@@ -1,3 +1,5 @@
+Scrapped. No updates or changes of any kind will be made to this.
+
 ## Introduction
 
 Do you like "archiving" data? Especially ones that tends to be ordered sequentially numerically? And does those data tend to be images of a sort? Fret no more!
